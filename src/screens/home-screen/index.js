@@ -11,6 +11,8 @@ import { mvs } from 'config/metrices';
 import { useAppDispatch, useAppSelector } from 'hooks/use-store';
 import { navigate } from 'navigation/navigation-ref';
 import React from 'react';
+// import localVideo from "./local_video.mkv"
+import localVideo from "./local.mp4"
 import { FlatList, ImageBackground, ScrollView, View, Text } from 'react-native';
 import {
   getAllHospitals,
@@ -22,25 +24,26 @@ import Bold from 'typography/bold-text';
 import Regular from 'typography/regular-text';
 import styles from './styles';
 import Video from 'react-native-video';
+let videoURL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 const Home = props => {
   const { userInfo, unreadNotification, location } = useAppSelector(s => s?.user);
   const isFocus = useIsFocused();
   const dispatch = useAppDispatch();
   const { t } = i18n;
   const [homeData, setHomeData] = React.useState({});
-  React.useEffect(() => {
-    // getDoctorAvailability(2);
-    dispatch(getAllHospitals());
-    (async () => {
-      try {
-        if (isFocus) {
-          const res = await getHomeData(userInfo?.id);
-          loadNotifications();
-          setHomeData(res);
-        }
-      } catch (error) { }
-    })();
-  }, [isFocus]);
+  // React.useEffect(() => {
+  //   // getDoctorAvailability(2);
+  //   dispatch(getAllHospitals());
+  //   (async () => {
+  //     try {
+  //       if (isFocus) {
+  //         const res = await getHomeData(userInfo?.id);
+  //         loadNotifications();
+  //         setHomeData(res);
+  //       }
+  //     } catch (error) { }
+  //   })();
+  // }, [isFocus]);
   const loadNotifications = async () => {
     try {
       dispatch(getNotifications({ doctor_id: userInfo?.id }));
@@ -48,11 +51,11 @@ const Home = props => {
       console.log('error=>', error);
     }
   };
-  const onBuffer = () => {
-    console.log("VIDEO BUFFRING")
+  const onBuffer = (buffer) => {
+    console.log("===============VIDEO BUFFRING=================== ", buffer)
   }
-  const videoError = () => {
-    console.log("VIDEO ERROR")
+  const videoError = (error) => {
+    console.log("=======================VIDEO ERROR===================", error)
   }
   return (
     <View style={styles.container}>
@@ -134,15 +137,22 @@ const Home = props => {
             keyExtractor={(item, index) => index?.toString()}
           />
         </ScrollView> */}
-        <Text>Hello Vied</Text>
-        <Video source={{ uri: "https://youtu.be/dAHqcEnPIXw" }}   // Can be a URL or a local file.
-          ref={(ref) => {
-           let player = ref
-           console.log("PLAYER===> ", player)
-          }}                                      // Store reference
-          onBuffer={onBuffer}                // Callback when remote video is buffering
-          onError={videoError}               // Callback when video cannot be loaded
-          style={styles.backgroundVideo} />
+        <View style={styles.videoView}>
+
+          <Video
+            // source={localVideo}   // Can be a URL or a local file.
+            source={{ uri: videoURL }}   // Can be a URL or a local file.
+            controls={true}
+            ref={(ref) => {
+              let player = ref
+              console.log("PLAYER===> ")
+            }}                                      // Store reference
+            onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
+            onError={(e) => videoError(e)}               // Callback when video cannot be loaded
+            style={styles.backgroundVideo} 
+            // style={{ width: 400, height: 300, backgroundColor: "lightblue" }}
+          />
+        </View>
       </View>
     </View>
   );

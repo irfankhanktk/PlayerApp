@@ -39,6 +39,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
   },
+  videoView:{
+    backgroundColor: colors.blueHalf,
+    width :"100%",
+    height: 300
+  }
 
 
 });
