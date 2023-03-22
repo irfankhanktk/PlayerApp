@@ -11,7 +11,7 @@ import { mvs } from 'config/metrices';
 import { useAppDispatch, useAppSelector } from 'hooks/use-store';
 import { navigate } from 'navigation/navigation-ref';
 import React from 'react';
-import { FlatList, ImageBackground, ScrollView, View } from 'react-native';
+import { FlatList, ImageBackground, ScrollView, View, Text } from 'react-native';
 import {
   getAllHospitals,
   getHomeData,
@@ -21,6 +21,7 @@ import i18n from 'translation';
 import Bold from 'typography/bold-text';
 import Regular from 'typography/regular-text';
 import styles from './styles';
+import Video from 'react-native-video';
 const Home = props => {
   const { userInfo, unreadNotification, location } = useAppSelector(s => s?.user);
   const isFocus = useIsFocused();
@@ -47,7 +48,12 @@ const Home = props => {
       console.log('error=>', error);
     }
   };
-
+  const onBuffer = () => {
+    console.log("VIDEO BUFFRING")
+  }
+  const videoError = () => {
+    console.log("VIDEO ERROR")
+  }
   return (
     <View style={styles.container}>
       <AppHeader
@@ -58,7 +64,7 @@ const Home = props => {
         <SearchInput value="" />
       </View> */}
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.contentContainerStyle}>
+        {/* <ScrollView contentContainerStyle={styles.contentContainerStyle}>
           <ImageBackground source={appointment_bg} style={styles.bgImg}>
             <Regular
               label={t('appointments')}
@@ -127,9 +133,19 @@ const Home = props => {
             }}
             keyExtractor={(item, index) => index?.toString()}
           />
-        </ScrollView>
+        </ScrollView> */}
+        <Text>Hello Vied</Text>
+        <Video source={{ uri: "https://youtu.be/dAHqcEnPIXw" }}   // Can be a URL or a local file.
+          ref={(ref) => {
+           let player = ref
+           console.log("PLAYER===> ", player)
+          }}                                      // Store reference
+          onBuffer={onBuffer}                // Callback when remote video is buffering
+          onError={videoError}               // Callback when video cannot be loaded
+          style={styles.backgroundVideo} />
       </View>
     </View>
   );
 };
 export default Home;
+

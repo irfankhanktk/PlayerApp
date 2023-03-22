@@ -22,7 +22,8 @@ const Splash = (props: props) => {
 
     (async () => {
       try {
-        let screen: 'Login' | 'BottomTab' = 'Login';
+        // let screen: 'Login' | 'BottomTab' = 'Login';
+        let screen: 'Login' | 'BottomTab' = 'BottomTab';
         UTILS.getItem(STORAGEKEYS.lang).then((lang: any) => {
           i18n.changeLanguage(lang);
           dispatch(setLanguage(lang ?? 'en'));

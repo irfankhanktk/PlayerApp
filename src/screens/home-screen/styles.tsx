@@ -31,7 +31,15 @@ const styles = StyleSheet.create({
     height: mvs(200),
     paddingHorizontal: mvs(25),
     paddingVertical: mvs(30),
-  }
+  },
+  backgroundVideo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
+
 
 });
 export default styles;
