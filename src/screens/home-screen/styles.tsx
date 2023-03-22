@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   servicesHeading: {
     marginHorizontal: mvs(20),
   },
-  bgImg:{
+  bgImg: {
     height: mvs(200),
     paddingHorizontal: mvs(25),
     paddingVertical: mvs(30),
@@ -39,10 +39,17 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
   },
-  videoView:{
+  videoView: {
     backgroundColor: colors.blueHalf,
-    width :"100%",
-    height: 300
+    width: "100%",
+    minHeight: 300
+  },
+  marqueeView: {
+    position: "absolute",
+    bottom: mvs(50),
+    right: mvs(50),
+    left: mvs(50),
+    backgroundColor: `${colors.lightGray}60`
   }
 
 

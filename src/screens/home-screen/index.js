@@ -11,7 +11,7 @@ import { mvs } from 'config/metrices';
 import { useAppDispatch, useAppSelector } from 'hooks/use-store';
 import { navigate } from 'navigation/navigation-ref';
 import React from 'react';
-// import localVideo from "./local_video.mkv"
+import MarqueeText from 'react-native-marquee';
 import localVideo from "./local.mp4"
 import { FlatList, ImageBackground, ScrollView, View, Text } from 'react-native';
 import {
@@ -138,7 +138,6 @@ const Home = props => {
           />
         </ScrollView> */}
         <View style={styles.videoView}>
-
           <Video
             // source={localVideo}   // Can be a URL or a local file.
             source={{ uri: videoURL }}   // Can be a URL or a local file.
@@ -149,9 +148,20 @@ const Home = props => {
             }}                                      // Store reference
             onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
             onError={(e) => videoError(e)}               // Callback when video cannot be loaded
-            style={styles.backgroundVideo} 
-            // style={{ width: 400, height: 300, backgroundColor: "lightblue" }}
+            style={styles.backgroundVideo}
+          // style={{ width: 400, height: 300, backgroundColor: "lightblue" }}
           />
+          <View style={styles.marqueeView}>
+            <MarqueeText
+              style={{ fontSize: mvs(18) }}
+              speed={0.1}
+              marqueeOnStart={true}
+              loop={true}
+              delay={10000}
+            >
+              Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry.
+            </MarqueeText>
+          </View>
         </View>
       </View>
     </View>
