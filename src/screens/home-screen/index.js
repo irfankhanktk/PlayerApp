@@ -24,7 +24,8 @@ import Regular from 'typography/regular-text';
 import styles from './styles';
 import Video from 'react-native-video';
 import localVideo from "./local.mp4"
-
+import convertToProxyURL from 'react-native-video-cache';
+import VideoPlayer from 'react-native-video-controls';
 let videoURL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 let videoURL2 = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4?_=1";
 let videoURL3 = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
@@ -206,9 +207,9 @@ const Home = props => {
           />
         </ScrollView> */}
         <View style={styles.videoView}>
-          <Video
+          <VideoPlayer
             // source={localVideo}   // Can be a URL or a local file.
-            source={{ uri: videos[currentVideoIndex]?.uri }}   // Can be a URL or a local file.
+            source={{ uri:convertToProxyURL(videos[currentVideoIndex]?.uri)}}   // Can be a URL or a local file.
             controls={true}
             ref={videoRef}                                      // Store reference
             onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
