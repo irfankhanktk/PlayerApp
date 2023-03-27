@@ -1,4 +1,4 @@
-import { useIsFocused } from '@react-navigation/native';
+import { CurrentRenderContext, useIsFocused } from '@react-navigation/native';
 import { appointment_bg } from 'assets/images';
 import { IconButton } from 'components/atoms/buttons';
 import AppHeader from 'components/atoms/headers';
@@ -12,7 +12,6 @@ import { useAppDispatch, useAppSelector } from 'hooks/use-store';
 import { navigate } from 'navigation/navigation-ref';
 import React from 'react';
 import MarqueeText from 'react-native-marquee';
-import localVideo from "./local.mp4"
 import { FlatList, ImageBackground, ScrollView, View, Text } from 'react-native';
 import {
   getAllHospitals,
@@ -24,13 +23,81 @@ import Bold from 'typography/bold-text';
 import Regular from 'typography/regular-text';
 import styles from './styles';
 import Video from 'react-native-video';
+import localVideo from "./local.mp4"
+
 let videoURL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+let videoURL2 = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4?_=1";
+let videoURL3 = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+let videoURL4 = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
+const VIDEOLIST = [
+  {
+    uri:videoURL,
+    title: "VIDEO 1",
+    time: 20,
+    repeat:true
+  },
+  {
+    uri:videoURL2,
+    title: "VIDEO 2",
+    time: 10,
+    repeat:false
+  },
+  {
+    uri:videoURL3,
+    title: "VIDEO 3",
+    time: 10,
+    repeat:false
+  },
+  {
+    uri:videoURL4,
+    title: "VIDEO 4",
+    time: 15,
+    repeat:false
+  },
+]
 const Home = props => {
   const { userInfo, unreadNotification, location } = useAppSelector(s => s?.user);
   const isFocus = useIsFocused();
   const dispatch = useAppDispatch();
   const { t } = i18n;
   const [homeData, setHomeData] = React.useState({});
+  const [videos, setVideos] = React.useState(VIDEOLIST)
+  const [currentVideoIndex, setCurrentVideoIndex] = React.useState(0)
+  const [timeLimit, setTimeLimit] = React.useState(20)
+  const [isNext, setIsNext] = React.useState(null)
+  const videoRef = React.useRef()
+  React.useEffect(() => {
+    if(isNext){
+      console.log("Play next ? ", isNext)
+      playNext()
+      // setIsNext(false)
+    }else{
+    }
+  }, [isNext])
+  React.useEffect(() => {
+    // const intervalId = setInterval(()=>setCurrentVideoIndex((currentIndex)=>(currentIndex + 1) % videos.length), 35000)
+    // return ()=>clearInterval(intervalId)
+  }, [])
+  React.useEffect(() => {
+    console.log("video", currentVideoIndex + 1, " : ", videos[currentVideoIndex])
+  }, [currentVideoIndex, videos])
+
+  const onProgress = (progress) => {
+    const { currentTime, playableDuration } = progress
+    // console.log("CURRENT TIME REF===> ", videoRef?.current?.onSeek)
+    console.log({currentTime})
+    if (videos[currentVideoIndex].time <= currentTime && !isNext === true) {
+      setIsNext(true)
+      console.log("TIME LIMIT EXCEEDS: ", timeLimit <= currentTime, "\nVIDEO END: ", playableDuration <= currentTime)
+      // playNext()
+    }
+  }
+  const playNext = () => {
+    if(videos[currentVideoIndex].repeat){
+      videoRef?.current?.seek(0);
+    }else
+    setCurrentVideoIndex((currentIndex) => (currentIndex + 1) % videos.length)
+  }
   // React.useEffect(() => {
   //   // getDoctorAvailability(2);
   //   dispatch(getAllHospitals());
@@ -53,6 +120,7 @@ const Home = props => {
   };
   const onBuffer = (buffer) => {
     console.log("===============VIDEO BUFFRING=================== ", buffer)
+    if(buffer?.isBuffering === false) setIsNext(false)
   }
   const videoError = (error) => {
     console.log("=======================VIDEO ERROR===================", error)
@@ -140,14 +208,12 @@ const Home = props => {
         <View style={styles.videoView}>
           <Video
             // source={localVideo}   // Can be a URL or a local file.
-            source={{ uri: videoURL }}   // Can be a URL or a local file.
+            source={{ uri: videos[currentVideoIndex]?.uri }}   // Can be a URL or a local file.
             controls={true}
-            ref={(ref) => {
-              let player = ref
-              console.log("PLAYER===> ")
-            }}                                      // Store reference
+            ref={videoRef}                                      // Store reference
             onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
             onError={(e) => videoError(e)}               // Callback when video cannot be loaded
+            onProgress={onProgress}
             style={styles.backgroundVideo}
           // style={{ width: 400, height: 300, backgroundColor: "lightblue" }}
           />
