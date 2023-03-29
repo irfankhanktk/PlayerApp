@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from 'hooks/use-store';
 import { navigate } from 'navigation/navigation-ref';
 import React from 'react';
 import MarqueeText from 'react-native-marquee';
-import { FlatList, ImageBackground, ScrollView, View, Text } from 'react-native';
+import { FlatList, ImageBackground, ScrollView, View, Text,PermissionsAndroid } from 'react-native';
 import {
   getAllHospitals,
   getHomeData,
@@ -26,6 +26,7 @@ import Video from 'react-native-video';
 import localVideo from "./local.mp4"
 import convertToProxyURL from 'react-native-video-cache';
 import VideoPlayer from 'react-native-video-controls';
+import RNFS from "react-native-fs"
 let videoURL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 let videoURL2 = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4?_=1";
 let videoURL3 = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
@@ -79,14 +80,60 @@ const Home = props => {
     // const intervalId = setInterval(()=>setCurrentVideoIndex((currentIndex)=>(currentIndex + 1) % videos.length), 35000)
     // return ()=>clearInterval(intervalId)
   }, [])
-  React.useEffect(() => {
-    console.log("video", currentVideoIndex + 1, " : ", videos[currentVideoIndex])
-  }, [currentVideoIndex, videos])
+  const onDownloadImagePress=()=> {
+    RNFS.downloadFile({
+      fromUrl: 'https://facebook.github.io/react-native/img/header_logo.png',
+      toFile: `${RNFS.DocumentDirectoryPath}/react-native.png`,
+    }).promise.then((r) => {
+      console.log("DOWNLOADED=====> ", r)
+    });
+}
+const requestReadWritePermission = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'Write Permission',
+        message:
+          'App needs access to your Storage ' +
+          'so you can download videos and pictures.',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    const grantedRead = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      {
+        title: 'Write Permission',
+        message:
+          'App needs access to your Storage ' +
+          'so you can View videos and pictures.',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('You write now');
+    } else {
+      console.log('Write permission denied');
+    }
+    if (grantedRead === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('You write now');
+    } else {
+      console.log('Write permission denied');
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+};
 
+React.useEffect(()=>{},[])
   const onProgress = (progress) => {
     const { currentTime, playableDuration } = progress
     // console.log("CURRENT TIME REF===> ", videoRef?.current?.onSeek)
-    console.log({currentTime})
+    // console.log({currentTime})
     if (videos[currentVideoIndex].time <= currentTime && !isNext === true) {
       setIsNext(true)
       console.log("TIME LIMIT EXCEEDS: ", timeLimit <= currentTime, "\nVIDEO END: ", playableDuration <= currentTime)
@@ -207,7 +254,7 @@ const Home = props => {
           />
         </ScrollView> */}
         <View style={styles.videoView}>
-          <VideoPlayer
+          <Video
             // source={localVideo}   // Can be a URL or a local file.
             source={{ uri:convertToProxyURL(videos[currentVideoIndex]?.uri)}}   // Can be a URL or a local file.
             controls={true}
