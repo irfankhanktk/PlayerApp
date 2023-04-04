@@ -360,7 +360,8 @@ const Home = props => {
           onPress={() => {
             try {
               url = 'whatsapp://send'
-              return Linking.openURL(url);
+               Linking.openURL(url);
+              console.log("OPEN URL", url)
             } catch (error) {
               console.log("RN Linking Error: ", error)
             }
