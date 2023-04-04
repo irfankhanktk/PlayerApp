@@ -15,6 +15,7 @@ import UpdatePassword from 'screens/update-password';
 import UpdateProfile from 'screens/update-profile';
 import { horizontalAnimation } from '../utils';
 import { TabBar } from './curvedtabs';
+import Home from 'screens/home-screen';
 const Stack = createNativeStackNavigator();
 
 export const RootNavigator = () => {
@@ -40,7 +41,7 @@ export const RootNavigator = () => {
           <Stack.Screen name="LanguageScreen" component={LanguageScreen} />
           <Stack.Screen name="UpdatePassword" component={UpdatePassword} />
         </Stack.Group>
-        <Stack.Screen name="BottomTab" component={TabBar} />
+        <Stack.Screen name="BottomTab" component={Home} />
       </Stack.Navigator>
     </View>
   );

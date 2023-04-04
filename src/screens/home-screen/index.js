@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from 'hooks/use-store';
 import { navigate } from 'navigation/navigation-ref';
 import React from 'react';
 import MarqueeText from 'react-native-marquee';
-import { FlatList, ImageBackground, ScrollView, View, Text, PermissionsAndroid, Image, Alert } from 'react-native';
+import { FlatList, ImageBackground, ScrollView, View, Text, PermissionsAndroid, Image, Alert, TouchableOpacity, Linking } from 'react-native';
 import {
   getAllHospitals,
   getHomeData,
@@ -155,7 +155,7 @@ const Home = props => {
         },
         (tx, error) => {
           console.log("Store in DB failed ===> ", { video_name, video_path })
-          Alert.alert("Store in DB Failed", "Video: " + video_name)
+          // Alert.alert("Store in DB Failed", "Video: " + video_name)
         }
       );
     });
@@ -302,7 +302,7 @@ const Home = props => {
   const onSimulateAPI = () => {
     let success = true;
     setTimeout(() => {
-      if (!success) {
+      if (success) {
         console.log("SIMULATING SUCCESS RESPONSE")
         setVideos(VIDEOLIST)
         VIDEOLIST.map((value, index) => {
@@ -313,112 +313,73 @@ const Home = props => {
         fetchAllVideos()
       }
     }, 5000)
-  }
+  };
+  const position = 'center';
+  const isTop = true;
   return (
     <View style={styles.container}>
-      <AppHeader
+      {/* <AppHeader
         unreadNotification={unreadNotification}
         title={`\t${userInfo?.name || t('guest')}`}
-      />
-      {/* <View style={styles.search}>
-        <SearchInput value="" />
-      </View> */}
-      <View style={styles.container}>
-        {/* <ScrollView contentContainerStyle={styles.contentContainerStyle}>
-          <ImageBackground source={appointment_bg} style={styles.bgImg}>
-            <Regular
-              label={t('appointments')}
-              style={{ fontSize: mvs(24), color: colors.primary }}
-            />
-          </ImageBackground>
-          <Row
-            style={{
-              ...colors.shadow,
-              borderRadius: mvs(15),
-              backgroundColor: colors.white,
-              paddingVertical: mvs(10),
-              marginVertical: mvs(20),
-            }}>
-            <AppointmentCounter
-              onPress={() => navigate('AppointmentsList', { status: 'total' })}
-              value={homeData?.counterAppointment?.total ?? '-'}
-              label={t('total')}
-            />
-            <AppointmentCounter
-              onPress={() => navigate('AppointmentsList', { status: 'waiting' })}
-              value={homeData?.counterAppointment?.waiting ?? '-'}
-              label={t('waiting')}
-            />
-            <AppointmentCounter
-              onPress={() =>
-                navigate('AppointmentsList', { status: 'confirmed' })
-              }
-              value={homeData?.counterAppointment?.confirmed ?? '-'}
-              label={t('confirmed')}
-            />
-            <AppointmentCounter
-              onPress={() =>
-                navigate('AppointmentsList', { status: 'completed' })
-              }
-              value={homeData?.counterAppointment?.completed ?? '-'}
-              label={t('completed')}
-            />
-          </Row>
-          <Row>
-            <IconButton icon={'user'} title={t('patients')} />
-            <IconButton
-              icon={'wallet'}
-              title={t('payments')}
-              containerStyle={{
-                backgroundColor: colors.green,
-              }}
-            />
-          </Row>
-          <Bold
-            label={t('popular_patients')}
-            style={{
-              fontSize: mvs(20),
-              marginBottom: mvs(10),
-              marginTop: mvs(20),
-            }}
-          />
-          <FlatList
-            horizontal
-            ListEmptyComponent={<EmptyList label={t('no_patients')} />}
-            contentContainerStyle={styles.contentContainerStyle}
-            showsVerticalScrollIndicator={false}
-            data={homeData?.patients}
-            renderItem={({ item, index }) => {
-              return <PopularPatientCard key={index} name={item?.name} />;
-            }}
-            keyExtractor={(item, index) => index?.toString()}
-          />
-        </ScrollView> */}
-        <View style={styles.videoView}>
-          <Video
-            // source={localVideo}   // Can be a URL or a local file.
-            source={{ uri: videos[currentVideoIndex]?.uri?.indexOf("file") >=0 ? videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
-            controls={true}
-            ref={videoRef}                                      // Store reference
-            onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
-            onError={(e) => videoError(e)}               // Callback when video cannot be loaded
-            onProgress={onProgress}
-            style={styles.backgroundVideo}
-          // style={{ width: 400, height: 300, backgroundColor: "lightblue" }}
-          />
-          <View style={styles.marqueeView}>
-            <MarqueeText
-              style={{ fontSize: mvs(18) }}
-              speed={0.1}
-              marqueeOnStart={true}
-              loop={true}
-              delay={10000}
-            >
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry.
-            </MarqueeText>
-          </View>
+      /> */}
 
+      <View style={styles.container}>
+
+        {/* <View style={styles.videoView}> */}
+        <Video
+          // source={localVideo}   // Can be a URL or a local file.
+          source={{ uri: videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ? videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
+          // source={{ uri: convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
+          controls={false}
+          resizeMode={'cover'}
+          fullscreen={true}
+          ref={videoRef}                                      // Store reference
+          onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
+          onError={(e) => videoError(e)}               // Callback when video cannot be loaded
+          onProgress={onProgress}
+          style={styles.backgroundVideo}
+        // style={{ width: 400, height: 300, backgroundColor: "lightblue" }}
+        />
+        <View style={styles.marqueeView}>
+          <MarqueeText
+            style={{ fontSize: mvs(18) }}
+            speed={0.1}
+            marqueeOnStart={true}
+            loop={true}
+            delay={10000}
+          >
+            Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry.
+          </MarqueeText>
         </View>
+        <TouchableOpacity
+          onPress={() => {
+            url = 'https://www.facebook.com/'
+            Linking.canOpenURL(url)
+              .then(supported => {
+                if (!supported) {
+                  console.log("Can't handle url: " + url);
+                } else {
+                  return Linking.openURL(url);
+                }
+              })
+              .catch(err => console.error('An error occurred', err));
+          }}
+          style={{
+            padding: mvs(10),
+            borderTopRightRadius: mvs(20),
+            borderBottomRightRadius: mvs(20),
+            position: 'absolute',
+            alignSelf: position,
+            // left: position === 'left' ? 0 : undefined,
+            // right: position === 'right' ? 0 : undefined,
+            bottom: !isTop ? 0 : undefined,
+            top: isTop ? 0 : undefined,
+
+            backgroundColor: colors.primary
+          }}>
+          <Regular label={'Facebook'} color={colors.white} />
+        </TouchableOpacity>
+        {/* </View> */}
         <View>
           {/* <FlatList
             ListEmptyComponent={<EmptyList label={t('no_video')} />}

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { mvs } from '../../config/metrices';
+import { height, mvs } from '../../config/metrices';
 import { colors } from '../../config/colors';
 
 const styles = StyleSheet.create({
@@ -33,19 +33,22 @@ const styles = StyleSheet.create({
     paddingVertical: mvs(30),
   },
   backgroundVideo: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
+    height: '100%',
+    width: '100%'
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
+    // bottom: 0,
+    // right: 0,
   },
-  image:{
+  image: {
 
   },
   videoView: {
     backgroundColor: colors.blueHalf,
     width: "100%",
-    minHeight: 300
+    height: height,
+    // minHeight: 300
   },
   marqueeView: {
     position: "absolute",
