@@ -1,4 +1,4 @@
-package com.playerapp;
+package com.prismatic.playerapp;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

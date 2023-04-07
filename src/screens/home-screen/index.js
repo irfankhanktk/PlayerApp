@@ -12,7 +12,7 @@ import { useAppDispatch, useAppSelector } from 'hooks/use-store';
 import { navigate } from 'navigation/navigation-ref';
 import React from 'react';
 import MarqueeText from 'react-native-marquee';
-import { FlatList, ImageBackground, ScrollView, View, Text, PermissionsAndroid, Image, Alert, TouchableOpacity, Linking } from 'react-native';
+import { FlatList, ImageBackground, ScrollView, View, Text, PermissionsAndroid, Image, Alert, TouchableOpacity, Linking, Animated } from 'react-native';
 import {
   getAllHospitals,
   getHomeData,
@@ -75,8 +75,19 @@ const Home = props => {
   const [isNext, setIsNext] = React.useState(null)
   const [picture, setPicture] = React.useState(null)
   const [allVideos, setAllVideos] = React.useState(
-    [{ "video_id": 1, "video_path": "/data/user/0/com.playerapp/files/react-native.png" }, { "video_id": 2, "video_path": "/data/user/0/com.playerapp/files/react-native.png" }, { "video_id": 3, "video_path": "/data/user/0/com.playerapp/files/react-native.png" }]
+    [{ "video_id": 1, "video_path": "/data/user/0/com.prismatic.playerapp/files/react-native.png" }, { "video_id": 2, "video_path": "/data/user/0/com.prismatic.playerapp/files/react-native.png" }, { "video_id": 3, "video_path": "/data/user/0/com.prismatic.playerapp/files/react-native.png" }]
   )
+  const startValue = React.useRef(new Animated.Value(0)).current;
+  const endValue = 150;
+  const duration = 5000;
+
+  React.useEffect(() => {
+    Animated.timing(startValue, {
+      toValue: -endValue,
+      duration: duration,
+      useNativeDriver: true,
+    }).start();
+  }, [startValue]);
   const videoRef = React.useRef()
   React.useEffect(() => {
     if (isNext) {
@@ -382,7 +393,7 @@ const Home = props => {
               console.log("RN Linking Error: ", error)
             }
           }}
-          style={{
+          style={[{
             padding: mvs(10),
             borderTopRightRadius: mvs(20),
             borderBottomRightRadius: mvs(20),
@@ -394,7 +405,15 @@ const Home = props => {
             top: isTop ? 0 : undefined,
 
             backgroundColor: colors.primary
-          }}>
+          },
+          {
+            transform: [
+              {
+                translateX: startValue,
+              },
+            ],
+          }
+          ]}>
           <Regular label={'Facebook'} color={colors.white} />
         </TouchableOpacity>
         {/* </View> */}

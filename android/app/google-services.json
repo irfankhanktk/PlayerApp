@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "831647740809",
+    "project_id": "player-app-c84eb",
+    "storage_bucket": "player-app-c84eb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831647740809:android:62e605b058b39a7214e758",
+        "android_client_info": {
+          "package_name": "com.prismatic.playerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831647740809-9b0edb8akv0441eic6k30r1ren53dkva.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEvlqXPo5Co27VpNWj72YRCexB7E7CBFU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831647740809-9b0edb8akv0441eic6k30r1ren53dkva.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
