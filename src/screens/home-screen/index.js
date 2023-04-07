@@ -28,12 +28,15 @@ import convertToProxyURL from 'react-native-video-cache';
 import VideoPlayer from 'react-native-video-controls';
 import RNFS from "react-native-fs"
 import { openDatabase } from 'react-native-sqlite-storage';
+import DeviceInfo, { getBuildIdSync, getBaseOsSync, getBatteryLevelSync, getApplicationName, getBatteryLevel, getDeviceToken, getMacAddressSync, getMacAddress } from 'react-native-device-info';
+// let deviceId = 
 let videoURL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 let videoURL2 = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4?_=1";
 let videoURL3 = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
 let videoURL4 = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
 
 const Home = props => {
+  // console.log("DEVICE ID ===> ", deviceId)
   const VIDEOLIST = [
     {
       uri: videoURL,
@@ -77,7 +80,7 @@ const Home = props => {
   const videoRef = React.useRef()
   React.useEffect(() => {
     if (isNext) {
-      console.log("Play next ? ", isNext)
+      // console.log("Play next ? ", isNext)
       playNext()
       // setIsNext(false)
     } else {
@@ -86,16 +89,27 @@ const Home = props => {
   React.useEffect(() => {
     // const intervalId = setInterval(()=>setCurrentVideoIndex((currentIndex)=>(currentIndex + 1) % videos.length), 35000)
     // return ()=>clearInterval(intervalId)
+    DeviceInfo.getUniqueId().then((res)=>console.log("Device ID ===> ", res))
+    DeviceInfo.getManufacturer().then(res=>console.log("MANUFACTURE ID===> ", res))
+    getMacAddress().then(res => console.log("MAC Address: ", res))
+    let appname = getApplicationName()
+    console.log("APP Name: ", appname)
+
   }, [])
-  const ActivateDB = () => {
+  const ActivateDB = (drop = false) => {
     db.transaction(function (txn) {
-      // txn.executeSql('DROP TABLE IF EXISTS table_video', []);
+      if (drop) {
+        console.log("Dropping Database Table")
+        txn.executeSql('DROP TABLE IF EXISTS table_video', []);
+      }
+      // console.log("CREATING or OPENING Database Table")
       txn.executeSql(
         'CREATE TABLE IF NOT EXISTS table_video(video_id INTEGER PRIMARY KEY AUTOINCREMENT,video_name VARCHAR(100), video_path VARCHAR(255))',
         [],
         (tx, success) => {
           // console.log("SUCCESS tx====> ", tx)
-          console.log("SUCCESS create table====> ", success)
+          // console.log("SUCCESS create table====> ", success)
+          console.log("DB OK")
         },
         (tx, error) => {
           // console.log("ERROR tx====> ", tx)
@@ -124,7 +138,7 @@ const Home = props => {
           }
 
           // setAllVideos(temp);
-          console.log("ALL VIDEOS===> ", temp)
+          // console.log("ALL VIDEOS===> ", temp)
           setVideos(temp)
         }
       );
@@ -137,7 +151,7 @@ const Home = props => {
         [video_path],
         (tx, results) => {
           console.log('DB Write Effect Rows===> ', results.rowsAffected);
-          console.log('DB Write Results===> ', results);
+          // console.log('DB Write Results===> ', results);
           // console.log('DB Write tx===> ', tx);
           if (results.rowsAffected > 0) {
             console.log("Download Successfully - DB")
@@ -169,13 +183,13 @@ const Home = props => {
 
   }
   const onDownloadVideo = (url, name) => {
-    console.log("Download...")
+    // console.log("Download...")
     if (!url) return console.log("Please Provide URL")
     if (!name) {
       let index = url.lastIndexOf("/")
       name = url.slice(index + 1)
     }
-    console.log({ name, url })
+    // console.log({ name, url })
     RNFS.downloadFile({
       fromUrl: url,
       toFile: `${RNFS.DocumentDirectoryPath}/${name}`,
@@ -251,11 +265,11 @@ const Home = props => {
     }
   };
   React.useEffect(() => {
-    console.log("VIDEOS====> ", videos)
+    // console.log("VIDEOS====> ", videos)
   }, [videos])
   React.useEffect(() => {
     requestReadWritePermission()
-    // ActivateDB()
+    ActivateDB()
     // onDownloadImagePress()
     // onLoadDownloaded()
     // fetchAllVideos()
@@ -298,7 +312,7 @@ const Home = props => {
     }
   };
   const onBuffer = (buffer) => {
-    console.log("===============VIDEO BUFFRING=================== ", buffer)
+    // console.log("===============VIDEO BUFFRING=================== ", buffer)
     if (buffer?.isBuffering === false) setIsNext(false)
   }
   const videoError = (error) => {
@@ -313,6 +327,8 @@ const Home = props => {
         VIDEOLIST.map((value, index) => {
           setTimeout(() => onDownloadVideo(value.uri), 500)
         })
+        ActivateDB(true)
+
       } else {
         console.log("SIMULATING 404 RESPONSE")
         fetchAllVideos()
@@ -360,7 +376,7 @@ const Home = props => {
           onPress={() => {
             try {
               url = 'whatsapp://send'
-               Linking.openURL(url);
+              Linking.openURL(url);
               console.log("OPEN URL", url)
             } catch (error) {
               console.log("RN Linking Error: ", error)
