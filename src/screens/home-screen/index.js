@@ -30,6 +30,7 @@ import RNFS from "react-native-fs"
 import { openDatabase } from 'react-native-sqlite-storage';
 import DeviceInfo, { getBuildIdSync, getBaseOsSync, getBatteryLevelSync, getApplicationName, getBatteryLevel, getDeviceToken, getMacAddressSync, getMacAddress } from 'react-native-device-info';
 // let deviceId = 
+import { getAllOfCollection, getData } from 'services/firebase';
 let videoURL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 let videoURL2 = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4?_=1";
 let videoURL3 = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
@@ -100,8 +101,8 @@ const Home = props => {
   React.useEffect(() => {
     // const intervalId = setInterval(()=>setCurrentVideoIndex((currentIndex)=>(currentIndex + 1) % videos.length), 35000)
     // return ()=>clearInterval(intervalId)
-    DeviceInfo.getUniqueId().then((res)=>console.log("Device ID ===> ", res))
-    DeviceInfo.getManufacturer().then(res=>console.log("MANUFACTURE ID===> ", res))
+    DeviceInfo.getUniqueId().then((res) => console.log("Device ID ===> ", res))
+    DeviceInfo.getManufacturer().then(res => console.log("MANUFACTURE ID===> ", res))
     getMacAddress().then(res => console.log("MAC Address: ", res))
     let appname = getApplicationName()
     console.log("APP Name: ", appname)
@@ -276,8 +277,16 @@ const Home = props => {
     }
   };
   React.useEffect(() => {
-    // console.log("VIDEOS====> ", videos)
-  }, [videos])
+    (async () => {
+      try {
+
+        const res = await getAllOfCollection('videos');
+        console.log('res of collections=>', res);
+      } catch (error) {
+
+      }
+    })()
+  }, [])
   React.useEffect(() => {
     requestReadWritePermission()
     ActivateDB()
