@@ -1,4 +1,4 @@
-package com.playerapp;
+package com.prismatic.playerapp;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
