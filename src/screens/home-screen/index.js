@@ -151,18 +151,23 @@ const Home = props => {
           console.log('DB Write Results===> ', results);
           // console.log('DB Write tx===> ', tx);
           if (results.rowsAffected > 0) {
-            Alert.alert(
-              'Success',
-              'You are Successfully Downloaded - DB',
-              [
-                {
-                  text: 'Ok',
-                  onPress: () => { },
-                },
-              ],
-              { cancelable: false }
-            );
-          } else Alert.alert('Download Failed - DB');
+            console.log("Download Successfully - DB")
+
+            // Alert.alert(
+            //   'Success',
+            //   'You are Successfully Downloaded - DB',
+            //   [
+            //     {
+            //       text: 'Ok',
+            //       onPress: () => { },
+            //     },
+            //   ],
+            //   { cancelable: false }
+            // );
+          } else {
+            console.log("Download Failed - DB")
+            // Alert.alert('Download Failed - DB');
+          }
         },
         (tx, error) => {
           console.log("Store in DB failed ===> ", { video_name, video_path })
@@ -364,16 +369,12 @@ const Home = props => {
         </View>
         <TouchableOpacity
           onPress={() => {
-            url = 'https://www.facebook.com/'
-            Linking.canOpenURL(url)
-              .then(supported => {
-                if (!supported) {
-                  console.log("Can't handle url: " + url);
-                } else {
-                  return Linking.openURL(url);
-                }
-              })
-              .catch(err => console.error('An error occurred', err));
+            try {
+              url = 'whatsapp://send'
+              return Linking.openURL(url);
+            } catch (error) {
+              console.log("RN Linking Error: ", error)
+            }
           }}
           style={[{
             padding: mvs(10),
