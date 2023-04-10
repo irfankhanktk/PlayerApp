@@ -1,36 +1,25 @@
-import { CurrentRenderContext, useIsFocused } from '@react-navigation/native';
-import { appointment_bg } from 'assets/images';
-import { IconButton } from 'components/atoms/buttons';
-import AppHeader from 'components/atoms/headers';
-import { Row } from 'components/atoms/row';
-import AppointmentCounter from 'components/molecules/appointment-counter';
-import { EmptyList } from 'components/molecules/empty-list';
-import PopularPatientCard from 'components/molecules/popular-patient-card';
+import NetInfo from "@react-native-community/netinfo";
+import { useIsFocused } from '@react-navigation/native';
 import { colors } from 'config/colors';
 import { mvs } from 'config/metrices';
 import { useAppDispatch, useAppSelector } from 'hooks/use-store';
-import { navigate } from 'navigation/navigation-ref';
 import React from 'react';
+import { Animated, Image, Linking, PermissionsAndroid, TouchableOpacity, View } from 'react-native';
+import DeviceInfo, { getApplicationName, getMacAddress, getUniqueId } from 'react-native-device-info';
+import RNFS from "react-native-fs";
 import MarqueeText from 'react-native-marquee';
-import { FlatList, ImageBackground, ScrollView, View, Text, PermissionsAndroid, Image, Alert, TouchableOpacity, Linking, Animated } from 'react-native';
+import { openDatabase } from 'react-native-sqlite-storage';
+import Video from 'react-native-video';
+import convertToProxyURL from 'react-native-video-cache';
 import {
-  getAllHospitals,
-  getHomeData,
   getNotifications
 } from 'services/api/api-actions';
 import i18n from 'translation';
-import Bold from 'typography/bold-text';
 import Regular from 'typography/regular-text';
 import styles from './styles';
-import Video from 'react-native-video';
-import localVideo from "./local.mp4"
-import convertToProxyURL from 'react-native-video-cache';
-import VideoPlayer from 'react-native-video-controls';
-import RNFS from "react-native-fs"
-import { openDatabase } from 'react-native-sqlite-storage';
-import DeviceInfo, { getBuildIdSync, getBaseOsSync, getBatteryLevelSync, getApplicationName, getBatteryLevel, getDeviceToken, getMacAddressSync, getMacAddress } from 'react-native-device-info';
 // let deviceId = 
-import { getAllOfCollection, getData } from 'services/firebase';
+import { getAllOfCollection } from 'services/firebase';
+import Medium from 'typography/medium-text';
 let videoURL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 let videoURL2 = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4?_=1";
 let videoURL3 = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
@@ -70,6 +59,7 @@ const Home = props => {
   const isFocus = useIsFocused();
   const dispatch = useAppDispatch();
   const { t } = i18n;
+  const [playerId, setPlayerId] = React.useState('');
   const [homeData, setHomeData] = React.useState({});
   const [videos, setVideos] = React.useState([])
   const [currentVideoIndex, setCurrentVideoIndex] = React.useState(0)
@@ -82,7 +72,14 @@ const Home = props => {
   const startValue = React.useRef(new Animated.Value(0)).current;
   const endValue = 150;
   const duration = 5000;
-
+  React.useEffect(() => {
+    (async () => {
+      getUniqueId().then(id => {
+        console.log('id=>>:::', id);
+        setPlayerId(id);
+      })
+    })()
+  }, [])
   React.useEffect(() => {
     Animated.timing(startValue, {
       toValue: -endValue,
@@ -91,6 +88,16 @@ const Home = props => {
     }).start();
   }, [startValue]);
   const videoRef = React.useRef()
+  React.useEffect(() => {
+    // Subscribe
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+    });
+
+    // Unsubscribe
+    unsubscribe();
+  }, [])
   React.useEffect(() => {
     if (isNext) {
       // console.log("Play next ? ", isNext)
@@ -213,30 +220,30 @@ const Home = props => {
       console.log("DOWNLOAD ERROR====> ", error)
     })
   }
-  const onLoadDownloaded = () => {
-    RNFS.readDir(`${RNFS.DocumentDirectoryPath}`)
-      .then((result) => {
-        console.log("Directory OPENED===> ", result);
-        setPicture(result[0].path)
-        return Promise.all([RNFS.stat(result[0].path), result[0].path]);
-      })
-      .then((statResult) => {
-        if (statResult[0].isFile()) {
-          // if we have a file, read it
-          return RNFS.readFile(statResult[1]);
-        }
+  // const onLoadDownloaded = () => {
+  //   RNFS.readDir(`${RNFS.DocumentDirectoryPath}`)
+  //     .then((result) => {
+  //       console.log("Directory OPENED===> ", result);
+  //       setPicture(result[0].path)
+  //       return Promise.all([RNFS.stat(result[0].path), result[0].path]);
+  //     })
+  //     .then((statResult) => {
+  //       if (statResult[0].isFile()) {
+  //         // if we have a file, read it
+  //         return RNFS.readFile(statResult[1]);
+  //       }
 
-        return 'no file';
-      })
-      .then((contents) => {
-        // log the file contents
-        console.log(contents);
-      })
-      .catch((e) => {
-        console.log("ERROR FILE OPEN ====> ", e)
-        console.log("ERROR MESSAGE - ERROR CODE ", e.message, " - ", e.code)
-      })
-  }
+  //       return 'no file';
+  //     })
+  //     .then((contents) => {
+  //       // log the file contents
+  //       console.log(contents);
+  //     })
+  //     .catch((e) => {
+  //       console.log("ERROR FILE OPEN ====> ", e)
+  //       console.log("ERROR MESSAGE - ERROR CODE ", e.message, " - ", e.code)
+  //     })
+  // }
   const requestReadWritePermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -364,6 +371,13 @@ const Home = props => {
   };
   const position = 'center';
   const isTop = true;
+  if (false)
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Regular label={'Please Put your player id in the web portal'} />
+        <Medium label={playerId} style={{ color: colors.primary, fontSize: mvs(24) }} />
+      </View>
+    );
   return (
     <View style={styles.container}>
       {/* <AppHeader
