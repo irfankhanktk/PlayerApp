@@ -69,6 +69,7 @@ const Home = props => {
   const [timeLimit, setTimeLimit] = React.useState(20)
   const [isNext, setIsNext] = React.useState(null)
   const [picture, setPicture] = React.useState(null)
+  const [paused, setPaused] = React.useState(false)
   const [allVideos, setAllVideos] = React.useState(
     [{ "video_id": 1, "video_path": "/data/user/0/com.prismatic.playerapp/files/react-native.png" }, { "video_id": 2, "video_path": "/data/user/0/com.prismatic.playerapp/files/react-native.png" }, { "video_id": 3, "video_path": "/data/user/0/com.prismatic.playerapp/files/react-native.png" }]
   )
@@ -266,12 +267,15 @@ const Home = props => {
 
   const getVideos = async () => {
     try {
-
       const res = await getAllOfCollection('videos');
       console.log('res of collections=>', res);
       setVideos(res);
+      console.log("get videos response ===> ", res)
+      res.map((value, index) => {
+        setTimeout(() => onDownloadVideo(value.uri), 500)
+      })
     } catch (error) {
-
+      fetchAllVideos()
     }
   }
   React.useEffect(() => {
@@ -284,7 +288,8 @@ const Home = props => {
     // onDownloadImagePress()
     // onLoadDownloaded()
     // fetchAllVideos()
-    onSimulateAPI()
+    // onSimulateAPI()
+    setVideos(VIDEOLIST)
   }, [])
   console.log('progress=>', currentProgress);
   const onProgress = (progress) => {
@@ -347,7 +352,14 @@ const Home = props => {
   };
   const position = 'center';
   const isTop = true;
-  if (true)
+  const pauseAfter20Seconds = () => {
+    console.log("Pause Function")
+    setTimeout(() => {
+      console.log("CHECK PAUSE")
+      setPaused(!paused)
+    }, 10000); // Pause after 10 seconds
+  };
+  if (false)
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Regular label={'Please Put your player id in the web portal'} />
@@ -368,13 +380,15 @@ const Home = props => {
           // source={localVideo}   // Can be a URL or a local file.
           source={{ uri: videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ? videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
           // source={{ uri: convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
-          controls={false}
+          controls={true}
           resizeMode={'cover'}
+          paused={paused}
           fullscreen={true}
           ref={videoRef}                                      // Store reference
           onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
           onError={(e) => videoError(e)}               // Callback when video cannot be loaded
           onProgress={onProgress}
+          onReadyForDisplay={pauseAfter20Seconds}
           style={styles.backgroundVideo}
         // style={{ width: 400, height: 300, backgroundColor: "lightblue" }}
         />
