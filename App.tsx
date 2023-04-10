@@ -8,6 +8,10 @@ import { Provider } from 'react-redux';
 import { store } from 'store';
 import 'translation';
 import './src/config/axios-interceptor';
+import { PersistGate } from 'redux-persist/integration/react';
+import { persistStore } from 'redux-persist'
+
+let persistor = persistStore(store);
 const App = () => {
   const [loading, setLoading] = useState(false);
   const [initialRoute, setInitialRoute] = useState<string | undefined>('Splash');
@@ -15,9 +19,11 @@ const App = () => {
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
       <Provider store={store}>
-        <NavigationContainer ref={navigationRef} linking={linking}>
-          <RootNavigator />
-        </NavigationContainer>
+        <PersistGate loading={null} persistor={persistor}>
+          <NavigationContainer ref={navigationRef} linking={linking}>
+            <RootNavigator />
+          </NavigationContainer>
+        </PersistGate>
       </Provider>
     </SafeAreaProvider>
   );

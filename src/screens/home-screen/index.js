@@ -20,6 +20,7 @@ import styles from './styles';
 // let deviceId = 
 import { getAllOfCollection } from 'services/firebase';
 import Medium from 'typography/medium-text';
+import { setUserInfo } from "store/reducers/user-reducer";
 let videoURL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 let videoURL2 = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4?_=1";
 let videoURL3 = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
@@ -55,10 +56,12 @@ const Home = props => {
   ]
   var db = openDatabase({ name: 'VideoDatabase.db' });
   const [currentProgress, setCurrentProgress] = React.useState(0);
-  const { userInfo, unreadNotification, location } = useAppSelector(s => s?.user);
+  const { userInfo } = useAppSelector(s => s?.user);
+  console.log('userinfo--->>>', userInfo);
   const isFocus = useIsFocused();
   const dispatch = useAppDispatch();
   const { t } = i18n;
+  const videoRef = React.useRef()
   const [playerId, setPlayerId] = React.useState('');
   const [homeData, setHomeData] = React.useState({});
   const [videos, setVideos] = React.useState([])
@@ -87,7 +90,6 @@ const Home = props => {
       useNativeDriver: true,
     }).start();
   }, [startValue]);
-  const videoRef = React.useRef()
   React.useEffect(() => {
     // Subscribe
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -106,16 +108,6 @@ const Home = props => {
     } else {
     }
   }, [isNext])
-  React.useEffect(() => {
-    // const intervalId = setInterval(()=>setCurrentVideoIndex((currentIndex)=>(currentIndex + 1) % videos.length), 35000)
-    // return ()=>clearInterval(intervalId)
-    DeviceInfo.getUniqueId().then((res) => console.log("Device ID ===> ", res))
-    DeviceInfo.getManufacturer().then(res => console.log("MANUFACTURE ID===> ", res))
-    getMacAddress().then(res => console.log("MAC Address: ", res))
-    let appname = getApplicationName()
-    console.log("APP Name: ", appname)
-
-  }, [])
   const ActivateDB = (drop = false) => {
     db.transaction(function (txn) {
       if (drop) {
@@ -172,21 +164,8 @@ const Home = props => {
         (tx, results) => {
           console.log('DB Write Effect Rows===> ', results.rowsAffected);
           // console.log('DB Write Results===> ', results);
-          // console.log('DB Write tx===> ', tx);
           if (results.rowsAffected > 0) {
             console.log("Download Successfully - DB")
-
-            // Alert.alert(
-            //   'Success',
-            //   'You are Successfully Downloaded - DB',
-            //   [
-            //     {
-            //       text: 'Ok',
-            //       onPress: () => { },
-            //     },
-            //   ],
-            //   { cancelable: false }
-            // );
           } else {
             console.log("Download Failed - DB")
             // Alert.alert('Download Failed - DB');
@@ -296,6 +275,10 @@ const Home = props => {
     }
   }
   React.useEffect(() => {
+    // dispatch(setUserInfo({
+    //   id: 1001,
+    //   name: 'Rabia khan'
+    // }));
     requestReadWritePermission()
     ActivateDB()
     // onDownloadImagePress()
@@ -336,13 +319,6 @@ const Home = props => {
   //     } catch (error) { }
   //   })();
   // }, [isFocus]);
-  const loadNotifications = async () => {
-    try {
-      dispatch(getNotifications({ doctor_id: userInfo?.id }));
-    } catch (error) {
-      console.log('error=>', error);
-    }
-  };
   const onBuffer = (buffer) => {
     // console.log("===============VIDEO BUFFRING=================== ", buffer)
     if (buffer?.isBuffering === false) setIsNext(false)
@@ -371,7 +347,7 @@ const Home = props => {
   };
   const position = 'center';
   const isTop = true;
-  if (false)
+  if (true)
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Regular label={'Please Put your player id in the web portal'} />
