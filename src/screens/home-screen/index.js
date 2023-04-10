@@ -65,6 +65,7 @@ const Home = props => {
     },
   ]
   var db = openDatabase({ name: 'VideoDatabase.db' });
+  const [currentProgress, setCurrentProgress] = React.useState(0);
   const { userInfo, unreadNotification, location } = useAppSelector(s => s?.user);
   const isFocus = useIsFocused();
   const dispatch = useAppDispatch();
@@ -151,7 +152,7 @@ const Home = props => {
 
           // setAllVideos(temp);
           // console.log("ALL VIDEOS===> ", temp)
-          setVideos(temp)
+          // setVideos(temp)
         }
       );
     });
@@ -276,17 +277,17 @@ const Home = props => {
       console.warn(err);
     }
   };
-  React.useEffect(() => {
-    (async () => {
-      try {
 
-        const res = await getAllOfCollection('videos');
-        console.log('res of collections=>', res);
-      } catch (error) {
+  const getVideos = async () => {
+    try {
 
-      }
-    })()
-  }, [])
+      const res = await getAllOfCollection('videos');
+      console.log('res of collections=>', res);
+      setVideos(res);
+    } catch (error) {
+
+    }
+  }
   React.useEffect(() => {
     requestReadWritePermission()
     ActivateDB()
@@ -295,15 +296,19 @@ const Home = props => {
     // fetchAllVideos()
     onSimulateAPI()
   }, [])
+  console.log('progress=>', currentProgress);
   const onProgress = (progress) => {
-    const { currentTime, playableDuration } = progress
-    // console.log("CURRENT TIME REF===> ", videoRef?.current?.onSeek)
+    const { currentTime, playableDuration } = progress;
+    setCurrentProgress(currentTime);
     // console.log({currentTime})
     if (videos[currentVideoIndex]?.time <= currentTime && !isNext === true) {
       setIsNext(true)
       console.log("TIME LIMIT EXCEEDS: ", timeLimit <= currentTime, "\nVIDEO END: ", playableDuration <= currentTime)
       // playNext()
     }
+    // if(videos[currentVideoIndex]?.widgets){
+
+    // }
   }
   const playNext = () => {
     if (videos[currentVideoIndex]?.repeat) {
@@ -339,11 +344,13 @@ const Home = props => {
     console.log("=======================VIDEO ERROR===================", error)
   }
   const onSimulateAPI = () => {
+
     let success = true;
     setTimeout(() => {
       if (success) {
         console.log("SIMULATING SUCCESS RESPONSE")
-        setVideos(VIDEOLIST)
+        // setVideos(VIDEOLIST)
+        getVideos();
         VIDEOLIST.map((value, index) => {
           setTimeout(() => onDownloadVideo(value.uri), 500)
         })
@@ -392,39 +399,40 @@ const Home = props => {
             Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry.
           </MarqueeText>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            try {
-              url = 'whatsapp://send'
-              Linking.openURL(url);
-              console.log("OPEN URL", url)
-            } catch (error) {
-              console.log("RN Linking Error: ", error)
-            }
-          }}
-          style={[{
-            padding: mvs(10),
-            borderTopRightRadius: mvs(20),
-            borderBottomRightRadius: mvs(20),
-            position: 'absolute',
-            alignSelf: position,
-            // left: position === 'left' ? 0 : undefined,
-            // right: position === 'right' ? 0 : undefined,
-            bottom: !isTop ? 0 : undefined,
-            top: isTop ? 0 : undefined,
+        {videos[currentVideoIndex]?.widgets?.map((w, i) => w?.setting?.delay > currentProgress ? null : (
+          <TouchableOpacity
+            key={i}
+            onPress={() => {
+              try {
+                url = w?.url;
+                Linking.openURL(url);
+                console.log("OPEN URL", url)
+              } catch (error) {
+                console.log("RN Linking Error: ", error)
+              }
+            }}
+            style={[{
+              paddingHorizontal: mvs(10),
+              paddingVertical: mvs(3),
+              borderRadius: mvs(12),
+              flexDirection: 'row',
+              position: 'absolute',
+              left: w?.setting?.position?.x,
+              top: w?.setting?.position?.y,
 
-            backgroundColor: colors.primary
-          },
-          {
-            transform: [
-              {
-                translateX: startValue,
-              },
-            ],
-          }
-          ]}>
-          <Regular label={'Facebook'} color={colors.white} />
-        </TouchableOpacity>
+              backgroundColor: colors.primary
+            },
+              // {
+              //   transform: [
+              //     {
+              //       translateX: startValue,
+              //     },
+              //   ],
+              // }
+            ]}>
+            <Regular label={w?.title} style={{ marginRight: mvs(10) }} color={colors.white} />
+            <Image source={{ uri: w?.icon }} style={{ height: mvs(25), width: mvs(30) }} />
+          </TouchableOpacity>))}
         {/* </View> */}
         <View>
           {/* <FlatList
