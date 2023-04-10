@@ -425,7 +425,7 @@ const Home = props => {
               // {
               //   transform: [
               //     {
-              //       translateX: startValue,
+              //       // translateX: 30,
               //     },
               //   ],
               // }
