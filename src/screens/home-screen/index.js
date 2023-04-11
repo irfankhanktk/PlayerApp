@@ -4,13 +4,16 @@ import { colors } from 'config/colors';
 import { mvs } from 'config/metrices';
 import { useAppDispatch, useAppSelector } from 'hooks/use-store';
 import React from 'react';
-import { Animated, Image, Linking, PermissionsAndroid, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Image, Linking, PermissionsAndroid, TouchableOpacity, View } from 'react-native';
 import DeviceInfo, { getApplicationName, getMacAddress, getUniqueId } from 'react-native-device-info';
 import RNFS from "react-native-fs";
 import MarqueeText from 'react-native-marquee';
 import { openDatabase } from 'react-native-sqlite-storage';
 import Video from 'react-native-video';
 import convertToProxyURL from 'react-native-video-cache';
+import database from '@react-native-firebase/database';
+
+
 import {
   getNotifications
 } from 'services/api/api-actions';
@@ -21,6 +24,7 @@ import styles from './styles';
 import { getAllOfCollection } from 'services/firebase';
 import Medium from 'typography/medium-text';
 import { setUserInfo } from "store/reducers/user-reducer";
+import moment from "moment";
 let videoURL = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
 let videoURL2 = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4?_=1";
 let videoURL3 = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
@@ -57,7 +61,6 @@ const Home = props => {
   var db = openDatabase({ name: 'VideoDatabase.db' });
   const [currentProgress, setCurrentProgress] = React.useState(0);
   const { userInfo } = useAppSelector(s => s?.user);
-  console.log('userinfo--->>>', userInfo);
   const isFocus = useIsFocused();
   const dispatch = useAppDispatch();
   const { t } = i18n;
@@ -78,9 +81,30 @@ const Home = props => {
   const duration = 5000;
   React.useEffect(() => {
     (async () => {
+      // database()
+      //   .ref(`/users/12`).onDisconnect().remove((error) => {
+      //     // Do some stuff
+      //     console.log('disconnected client');
+      //   });
+
       getUniqueId().then(id => {
         console.log('id=>>:::', id);
         setPlayerId(id);
+        database()
+          .ref(`/devices/${id}`).onDisconnect().update({
+            connection_status: false,
+          }, (error) => {
+            // Do some stuff
+            console.log('disconnected client error');
+          });
+        database()
+          .ref(`/devices/${id}`)
+          .set({
+            connection_status: true,
+            device_id: id,
+            last_sync_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+          })
+          .then(() => console.log('Data set.'));
       })
     })()
   }, [])
@@ -268,12 +292,11 @@ const Home = props => {
   const getVideos = async () => {
     try {
       const res = await getAllOfCollection('videos');
-      console.log('res of collections=>', res);
       setVideos(res);
       console.log("get videos response ===> ", res)
-      res.map((value, index) => {
-        setTimeout(() => onDownloadVideo(value.uri), 500)
-      })
+      // res.map((value, index) => {
+      //   setTimeout(() => onDownloadVideo(value.uri), 500)
+      // })
     } catch (error) {
       fetchAllVideos()
     }
@@ -281,17 +304,17 @@ const Home = props => {
   React.useEffect(() => {
     // dispatch(setUserInfo({
     //   id: 1001,
-    //   name: 'Rabia khan'
+    //   name: ' khan'
     // }));
-    requestReadWritePermission()
-    ActivateDB()
+    // requestReadWritePermission()
+    // ActivateDB()
     // onDownloadImagePress()
     // onLoadDownloaded()
     // fetchAllVideos()
-    // onSimulateAPI()
-    setVideos(VIDEOLIST)
+    onSimulateAPI()
+    // setVideos(VIDEOLIST)
   }, [])
-  console.log('progress=>', currentProgress);
+  // console.log('progress=>', currentProgress);
   const onProgress = (progress) => {
     const { currentTime, playableDuration } = progress;
     setCurrentProgress(currentTime);
@@ -353,11 +376,11 @@ const Home = props => {
   const position = 'center';
   const isTop = true;
   const pauseAfter20Seconds = () => {
-    console.log("Pause Function")
-    setTimeout(() => {
-      console.log("CHECK PAUSE")
-      setPaused(!paused)
-    }, 10000); // Pause after 10 seconds
+    // console.log("Pause Function")
+    // setTimeout(() => {
+    //   console.log("CHECK PAUSE")
+    //   setPaused(!paused)
+    // }, 10000); // Pause after 10 seconds
   };
   if (false)
     return (
