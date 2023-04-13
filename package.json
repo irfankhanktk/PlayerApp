@@ -39,7 +39,6 @@
     "react-native-device-info": "^10.5.1",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.9.0",
-    "react-native-hsnz-marquee": "^1.0.4",
     "react-native-image-crop-picker": "^0.38.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-linear-gradient": "^2.6.2",
