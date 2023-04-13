@@ -1,6 +1,9 @@
-import { View, Text, StyleSheet, ActivityIndicator, ColorValue } from 'react-native'
+import { View, Text, StyleSheet, ActivityIndicator, ColorValue, Platform } from 'react-native'
 import React from 'react'
 import { colors } from '../../../config/colors'
+import Lottie from 'lottie-react-native';
+import { DotLoading } from 'assets/lottie';
+import { mvs } from 'config/metrices';
 type props = {
     size?: number | "small" | "large" | undefined
     color?: ColorValue | undefined

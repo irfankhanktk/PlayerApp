@@ -7,6 +7,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
+  widget: {
+    paddingHorizontal: mvs(10),
+    paddingVertical: mvs(3),
+    borderRadius: mvs(12),
+    flexDirection: 'row',
+    position: 'absolute',
+    backgroundColor: colors.primary
+  },
   search: {
     paddingHorizontal: mvs(20),
     marginTop: -30,

@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CommonActions } from '@react-navigation/native';
 import moment from 'moment';
 import {
-  Linking, Platform,
+  Linking, PermissionsAndroid, Platform,
   Share
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -62,7 +62,15 @@ export const UTILS = {
     try {
       const isSupported = await Linking.canOpenURL(`tel:${phoneNumber}`);
       console.log('isSupported=>', isSupported);
-      if (isSupported) Linking.openURL(`tel:${phoneNumber}`);
+      if (isSupported)
+        Linking.openURL(`tel:${phoneNumber}`);
+    } catch (error) {
+      console.log('error =>', error);
+    }
+  },
+  openUrl: async (url: string) => {
+    try {
+      await Linking.openURL(url);
     } catch (error) {
       console.log('error =>', error);
     }
@@ -328,5 +336,44 @@ export const UTILS = {
     }
   },
   getMinutesDiff: (a: string, b: string) => moment(b).diff(a, 'm'),
-  getUUID: () => uuid?.v4()?.toString(),
+  requestReadWritePermission: async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Write Permission',
+          message:
+            'App needs access to your Storage ' +
+            'so you can download videos and pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      const grantedRead = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        {
+          title: 'Write Permission',
+          message:
+            'App needs access to your Storage ' +
+            'so you can View videos and pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You write now');
+      } else {
+        console.log('Write permission denied');
+      }
+      if (grantedRead === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You read now');
+      } else {
+        console.log('Read permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
 };

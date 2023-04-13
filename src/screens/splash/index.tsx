@@ -10,6 +10,9 @@ import RootStackParamList from '../../types/navigation-types/root-stack';
 import { UTILS } from '../../utils';
 import { useAppDispatch } from './../../hooks/use-store';
 import styles from './styles';
+import Lottie from 'lottie-react-native';
+import { DotLoading } from 'assets/lottie';
+import { mvs } from 'config/metrices';
 type props = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 
 const Splash = (props: props) => {
@@ -49,14 +52,7 @@ const Splash = (props: props) => {
 
   return (
     <View style={{ ...styles.container }}>
-      <ImageBackground source={splash_bg} style={{
-        height: '100%',
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
-        <SplashIcon />
-      </ImageBackground>
+      <Lottie source={DotLoading} autoPlay loop style={{ height: mvs(100) }} />
     </View>
   );
 };

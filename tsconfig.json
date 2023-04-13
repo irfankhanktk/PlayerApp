@@ -30,7 +30,7 @@
       "translation/*": ["/src/translation/*"],
       "types": ["/src/types"],
       "typography": ["/src/typography"],
-      "utils": ["/src/utils"],
+      "utils/*": ["/src/utils/*"]
     }
   },
   "exclude": [

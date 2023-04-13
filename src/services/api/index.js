@@ -27,7 +27,7 @@ export const postFormData = async (url, data) => {
     }).then(res => res).catch(err => { throw err }));
 };
 export const getData = async url => {
-    console.log('url: ', url);
+    console.log('url:::::::>>>: ', url);
     const response = await client.get(url);
     return response?.data;
 };
