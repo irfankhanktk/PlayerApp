@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     bottom: mvs(50),
     right: mvs(50),
     left: mvs(50),
-    backgroundColor: `${colors.lightGray}60`
+    backgroundColor: `${colors.black}60`
   }
 
 

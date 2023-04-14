@@ -43,6 +43,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-linear-gradient": "^2.6.2",
     "react-native-marquee": "^0.5.0",
+    "react-native-marquee-ab": "^1.2.6",
     "react-native-modal": "^13.0.1",
     "react-native-modal-datetime-picker": "^14.0.1",
     "react-native-paper": "^5.1.2",

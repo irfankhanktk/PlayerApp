@@ -17,42 +17,19 @@ type props = NativeStackScreenProps<RootStackParamList, 'Splash'>;
 
 const Splash = (props: props) => {
   const { navigation } = props;
-  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
-  }, [])
-  React.useEffect(() => {
-
     (async () => {
-      try {
-        // let screen: 'Login' | 'BottomTab' = 'Login';
-        let screen: 'Login' | 'BottomTab' = 'BottomTab';
-        UTILS.getItem(STORAGEKEYS.lang).then((lang: any) => {
-          i18n.changeLanguage(lang);
-          dispatch(setLanguage(lang ?? 'en'));
-        })
-
-        UTILS.getItem(STORAGEKEYS.user).then((data: any) => {
-          if (data) {
-            const user = JSON.parse(data);
-            screen = 'BottomTab';
-            dispatch(setUserInfo(user));
-          }
-          setTimeout(() => {
-            navigation?.replace(screen);
-          }, 2000);
-        });
-
-      } catch (error) {
-
-      }
+      setTimeout(() => {
+        navigation?.replace('Home');
+      }, 2000);
     })()
   }, []);
 
 
   return (
     <View style={{ ...styles.container }}>
-      <Lottie source={DotLoading} autoPlay loop style={{ height: mvs(100) }} />
+      <Lottie source={DotLoading} autoPlay loop style={{ height: mvs(200) }} />
     </View>
   );
 };

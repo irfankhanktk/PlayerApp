@@ -3,7 +3,7 @@ import database from '@react-native-firebase/database';
 import { colors } from 'config/colors';
 import { height, mvs } from 'config/metrices';
 import React from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { AppState, Image, TouchableOpacity, View } from 'react-native';
 import { getUniqueId } from 'react-native-device-info';
 import MarqueeText from 'react-native-marquee';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -21,6 +21,8 @@ import Lottie from "lottie-react-native";
 import { getAllOfCollection } from 'services/firebase';
 import Medium from 'typography/medium-text';
 import { UTILS } from "utils";
+import MarqueeVertically from "components/molecules/marquee-txt";
+import MoveableView from "components/molecules/moveable-view";
 
 const Home = props => {
 
@@ -45,6 +47,7 @@ const Home = props => {
 
       getUniqueId().then(id => {
         console.log('player id=>>:::', id);
+
         setPlayerId(id);
         setLoading(false);
       })
@@ -209,16 +212,18 @@ const Home = props => {
   }
   const pauseAfter20Seconds = () => {
   };
+  // return <MoveableView />
   if (loading) {
     return (<Loader />)
   }
-  if (!isConnected)
+  if (isConnected)
     return (
       <View style={styles.container}>
         <Lottie source={PlayerLottie} autoPlay loop style={{ height: height / 2, alignSelf: 'center' }} />
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Regular label={'Please Put your player id in the web portal'} />
           <Medium label={playerId} style={{ color: colors.primary, fontSize: mvs(34) }} />
+          <MarqueeVertically />
         </View>
       </View>
     );
@@ -239,7 +244,7 @@ const Home = props => {
       />
       <View style={styles.marqueeView}>
         <MarqueeText
-          style={{ fontSize: mvs(18) }}
+          style={{ fontSize: mvs(18), color: colors.green }}
           speed={0.1}
           marqueeOnStart={true}
           loop={true}

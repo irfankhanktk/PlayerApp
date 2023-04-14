@@ -22,7 +22,7 @@ export const RootNavigator = () => {
         initialRouteName="Splash"
         screenOptions={horizontalAnimation}>
         <Stack.Screen name="Splash" component={Splash} />
-        <Stack.Screen name="BottomTab" component={Home} />
+        <Stack.Screen name="Home" component={Home} />
       </Stack.Navigator>
     </View>
   );
