@@ -208,21 +208,25 @@ const Home = props => {
   React.useEffect(() => {
     getVideos();
   }, [])
-  const onProgress = (progress) => {
+  const onProgress = (progress, item, index) => {
     const { currentTime, playableDuration } = progress;
-    setCurrentProgress(currentTime);
+    const copy = [...videos];
+    item.videos[item?.videoIndex || 0].currentProgress = currentTime;
+    copy[index] = item;
+    setVideos(copy);
+    // setCurrentProgress(currentTime);
     // console.log({currentTime})
-    if (videos[currentVideoIndex]?.time <= currentTime && !isNext === true) {
-      setIsNext(true)
-      console.log("TIME LIMIT EXCEEDS: ", timeLimit <= currentTime, "\nVIDEO END: ", playableDuration <= currentTime)
-      // playNext()
-    }
+    // if (item.videos[item?.videoIndex || 0].runningTime <= currentTime && !isNext === true) {
+    // setIsNext(true)
+    // console.log("TIME LIMIT EXCEEDS: ", timeLimit <= currentTime, "\nVIDEO END: ", playableDuration <= currentTime)
+    // playNext()
+    // }
   }
   const playNext = () => {
-    if (videos[currentVideoIndex]?.repeat) {
-      videoRef?.current?.seek(0);
-    } else
-      setCurrentVideoIndex((currentIndex) => (currentIndex + 1) % videos.length)
+    // if (videos[currentVideoIndex]?.repeat) {
+    //   videoRef?.current?.seek(0);
+    // } else
+    //   setCurrentVideoIndex((currentIndex) => (currentIndex + 1) % videos.length)
   }
   const onBuffer = (buffer) => {
     if (buffer?.isBuffering === false) setIsNext(false)
@@ -253,11 +257,11 @@ const Home = props => {
   return (
     <View style={styles.container}>
       <Row style={{ flexWrap: 'wrap' }}>
-        {vs?.map((ele, index) => {
+        {videos?.map((ele, index) => {
           return (
             <View key={index} style={{ height: ele?.height, width: ele?.width, margin: 3 }}>
               <Video
-                source={{ uri: videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ? videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
+                source={{ uri: ele?.videos[ele?.videoIndex || 0]?.uri?.indexOf("file") >= 0 ? ele?.videos[ele?.videoIndex || 0]?.uri : convertToProxyURL(ele?.videos[ele?.videoIndex || 0]?.uri || "no_video") }}   // Can be a URL or a local file.
                 // source={require(`./local.mp4`)}
                 // source={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
                 controls={false}
@@ -268,7 +272,7 @@ const Home = props => {
                 // ref={videoRef}                                      // Store reference
                 onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
                 onError={(e) => videoError(e)}               // Callback when video cannot be loaded
-                onProgress={onProgress}
+                onProgress={(progress) => onProgress(progress, ele, index)}
                 onReadyForDisplay={pauseAfter20Seconds}
                 style={styles.backgroundVideo}
                 useTextureView={false}
@@ -276,7 +280,7 @@ const Home = props => {
                 playInBackground={true}
                 disableFocus={true}
               />
-              {videos[currentVideoIndex]?.widgets?.map((w, i) => w?.setting?.delay > currentProgress ? null : (
+              {ele?.videos[ele?.videoIndex || 0]?.widgets?.map((w, i) => w?.setting?.delay > ele?.videos[ele?.videoIndex || 0]?.currentProgress ? null : (
                 <TouchableOpacity
                   key={i}
                   onPress={() => UTILS.openUrl(w?.url)}
@@ -292,7 +296,7 @@ const Home = props => {
         })}
       </Row>
       {/* <Video
-        source={{ uri: videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ? videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
+        source={{ uri:ele?. videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ?ele?. videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
         controls={true}
         resizeMode={'contain'}
 
@@ -310,7 +314,7 @@ const Home = props => {
         disableFocus={true}
       />
       <Video
-        source={{ uri: videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ? videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
+        source={{ uri:ele?. videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ?ele?. videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
         controls={true}
         resizeMode={'contain'}
         // paused={paused}
