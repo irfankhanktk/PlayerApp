@@ -1,9 +1,9 @@
 import NetInfo from "@react-native-community/netinfo";
 import database from '@react-native-firebase/database';
 import { colors } from 'config/colors';
-import { height, mvs } from 'config/metrices';
+import { height, mvs, width } from 'config/metrices';
 import React from 'react';
-import { AppState, Image, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { getUniqueId } from 'react-native-device-info';
 import MarqueeText from 'react-native-marquee';
 import { openDatabase } from 'react-native-sqlite-storage';
@@ -15,18 +15,20 @@ import {
 import Regular from 'typography/regular-text';
 import styles from './styles';
 // let deviceId = 
-import { PlayerLottie } from "assets/lottie";
 import { Loader } from "components/atoms/loader";
+import MarqueeVertically from "components/molecules/marquee-txt";
 import Lottie from "lottie-react-native";
-import { getAllOfCollection } from 'services/firebase';
+import { getAllOfCollection, saveData } from 'services/firebase';
 import Medium from 'typography/medium-text';
 import { UTILS } from "utils";
-import MarqueeVertically from "components/molecules/marquee-txt";
-import MoveableView from "components/molecules/moveable-view";
+import { PlayerLottie } from "assets/lottie";
+import { Row } from "components/atoms/row";
 
 const Home = props => {
-
+  const video1Ref = React.useRef(null);
+  const video2Ref = React.useRef(null);
   var db = openDatabase({ name: 'VideoDatabase.db' });
+
   const [currentProgress, setCurrentProgress] = React.useState(0);
   const videoRef = React.useRef()
   const [playerId, setPlayerId] = React.useState('');
@@ -37,6 +39,23 @@ const Home = props => {
   const [paused, setPaused] = React.useState(false)
   const [isConnected, setIsConnected] = React.useState(false)
   const [loading, setLoading] = React.useState(true)
+  const vs = [{
+    height: mvs(300),
+    width: '48%',
+    videos
+  }, {
+    height: mvs(300),
+    width: '48%',
+    videos
+  }, {
+    height: mvs(300),
+    width: '48%',
+    videos
+  }, {
+    height: mvs(300),
+    width: '48%',
+    videos
+  }];
   React.useEffect(() => {
     (async () => {
       // database()
@@ -62,7 +81,7 @@ const Home = props => {
         }
       })()
 
-    }, 10000);
+    }, 60000);
     return () => {
       clearInterval(intervalId);
     };
@@ -178,7 +197,8 @@ const Home = props => {
   // }
   const getVideos = async () => {
     try {
-      const res = await getAllOfCollection('videos');
+
+      const res = await getAllOfCollection('video');
       setVideos(res);
       console.log("get videos response ===> ", res)
     } catch (error) {
@@ -216,10 +236,13 @@ const Home = props => {
   if (loading) {
     return (<Loader />)
   }
-  if (isConnected)
+  if (!isConnected)
     return (
       <View style={styles.container}>
-        <Lottie source={PlayerLottie} autoPlay loop style={{ height: height / 2, alignSelf: 'center' }} />
+        <Lottie
+          source={PlayerLottie}
+          autoPlay loop style={{ height: height / 2, alignSelf: 'center' }} />
+
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Regular label={'Please Put your player id in the web portal'} />
           <Medium label={playerId} style={{ color: colors.primary, fontSize: mvs(34) }} />
@@ -229,20 +252,81 @@ const Home = props => {
     );
   return (
     <View style={styles.container}>
-      <Video
+      <Row style={{ flexWrap: 'wrap' }}>
+        {vs?.map((ele, index) => {
+          return (
+            <View key={index} style={{ height: ele?.height, width: ele?.width, margin: 3 }}>
+              <Video
+                source={{ uri: videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ? videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
+                // source={require(`./local.mp4`)}
+                // source={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
+                controls={false}
+                resizeMode={'stretch'}
+
+                // paused={paused}
+                fullscreen={false}
+                // ref={videoRef}                                      // Store reference
+                onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
+                onError={(e) => videoError(e)}               // Callback when video cannot be loaded
+                onProgress={onProgress}
+                onReadyForDisplay={pauseAfter20Seconds}
+                style={styles.backgroundVideo}
+                useTextureView={false}
+                repeat
+                playInBackground={true}
+                disableFocus={true}
+              />
+              {videos[currentVideoIndex]?.widgets?.map((w, i) => w?.setting?.delay > currentProgress ? null : (
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => UTILS.openUrl(w?.url)}
+                  style={[styles.widget, {
+                    left: w?.setting?.position?.x,
+                    top: w?.setting?.position?.y,
+                  }]}>
+                  <Regular label={w?.title} style={{ marginRight: mvs(10) }} color={colors.white} />
+                  <Image source={{ uri: w?.icon }} style={{ height: mvs(25), width: mvs(30) }} />
+                </TouchableOpacity>))}
+            </View>
+          )
+        })}
+      </Row>
+      {/* <Video
         source={{ uri: videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ? videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
         controls={true}
-        resizeMode={'cover'}
-        paused={paused}
-        fullscreen={true}
+        resizeMode={'contain'}
+
+        // paused={paused}
+        fullscreen={false}
         ref={videoRef}                                      // Store reference
         onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
         onError={(e) => videoError(e)}               // Callback when video cannot be loaded
         onProgress={onProgress}
         onReadyForDisplay={pauseAfter20Seconds}
         style={styles.backgroundVideo}
+        useTextureView={false}
+        repeat
+        playInBackground={true}
+        disableFocus={true}
       />
-      <View style={styles.marqueeView}>
+      <Video
+        source={{ uri: videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ? videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
+        controls={true}
+        resizeMode={'contain'}
+        // paused={paused}
+        repeat
+        fullscreen={false}
+        ref={video2Ref}                                      // Store reference
+        onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
+        onError={(e) => videoError(e)}               // Callback when video cannot be loaded
+        onProgress={onProgress}
+        onReadyForDisplay={pauseAfter20Seconds}
+        useTextureView={false}
+        style={styles.backgroundVideo}
+        playInBackground={true}
+        disableFocus={true}
+      /> */}
+      {/* <View style={styles.marqueeView}>
         <MarqueeText
           style={{ fontSize: mvs(18), color: colors.green }}
           speed={0.1}
@@ -251,8 +335,8 @@ const Home = props => {
           delay={10000} >
           Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry.
         </MarqueeText>
-      </View>
-      {videos[currentVideoIndex]?.widgets?.map((w, i) => w?.setting?.delay > currentProgress ? null : (
+      </View> */}
+      {/* {videos[currentVideoIndex]?.widgets?.map((w, i) => w?.setting?.delay > currentProgress ? null : (
         <TouchableOpacity
           key={i}
           onPress={() => UTILS.openUrl(w?.url)}
@@ -262,9 +346,7 @@ const Home = props => {
           }]}>
           <Regular label={w?.title} style={{ marginRight: mvs(10) }} color={colors.white} />
           <Image source={{ uri: w?.icon }} style={{ height: mvs(25), width: mvs(30) }} />
-        </TouchableOpacity>))}
-      <View>
-      </View>
+        </TouchableOpacity>))} */}
     </View>
   );
 };

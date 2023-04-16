@@ -22,6 +22,10 @@ if linkage != nil
 end
 
 target 'PlayerApp' do
+  pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -55,6 +59,13 @@ target 'PlayerApp' do
       # necessary for Mac Catalyst builds
       :mac_catalyst_enabled => false
     )
+     #Start changes NOTE: Change IPHONEOS_DEPLOYMENT_TARGET to 13.0.
+     installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      end
+    end
+    # End Change
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end

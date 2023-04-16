@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     paddingVertical: mvs(30),
   },
   backgroundVideo: {
-    height: '100%',
+    height: 300,
     width: '100%'
     // position: 'absolute',
     // top: 0,

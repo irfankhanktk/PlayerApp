@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>831647740809-v53aic3hipm3s8afu5bclfq3ruldo992.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.831647740809-v53aic3hipm3s8afu5bclfq3ruldo992</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDEw4sWPrfb3uXvG5yne9aY1_KdCr_wCt0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>831647740809</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.prismatic.playerapp</string>
+	<key>PROJECT_ID</key>
+	<string>player-app-c84eb</string>
+	<key>STORAGE_BUCKET</key>
+	<string>player-app-c84eb.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:831647740809:ios:b5fa63500f4127ad14e758</string>
+	<key>DATABASE_URL</key>
+	<string>https://player-app-c84eb-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

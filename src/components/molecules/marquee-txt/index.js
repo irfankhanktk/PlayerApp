@@ -6,7 +6,6 @@ const MarqueeVertically = () => {
     const [contentHeight, setContentHeight] = useState(0);
     const [containerHeight, setContainerHeight] = useState(0);
 
-    console.log('offset=>', offset);
     useEffect(() => {
         const interval = setInterval(() => {
             setOffset(offset => offset > 300 ? 0 : offset + 1);
