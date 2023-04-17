@@ -38,24 +38,7 @@ const Home = props => {
   const [isNext, setIsNext] = React.useState(null)
   const [paused, setPaused] = React.useState(false)
   const [isConnected, setIsConnected] = React.useState(false)
-  const [loading, setLoading] = React.useState(true)
-  const vs = [{
-    height: mvs(300),
-    width: '48%',
-    videos
-  }, {
-    height: mvs(300),
-    width: '48%',
-    videos
-  }, {
-    height: mvs(300),
-    width: '48%',
-    videos
-  }, {
-    height: mvs(300),
-    width: '48%',
-    videos
-  }];
+  const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
     (async () => {
       // database()
@@ -77,7 +60,7 @@ const Home = props => {
       console.log(`Current blinking text`);
       (() => {
         if (playerId !== '' && isConnected) {
-          syncTimeStamp(playerId);
+          // syncTimeStamp(playerId);
         }
       })()
 
@@ -212,15 +195,18 @@ const Home = props => {
     const { currentTime, playableDuration } = progress;
     const copy = [...videos];
     item.videos[item?.videoIndex || 0].currentProgress = currentTime;
-    copy[index] = item;
-    setVideos(copy);
+    // setVideos(copy);
     // setCurrentProgress(currentTime);
     // console.log({currentTime})
-    // if (item.videos[item?.videoIndex || 0].runningTime <= currentTime && !isNext === true) {
-    // setIsNext(true)
-    // console.log("TIME LIMIT EXCEEDS: ", timeLimit <= currentTime, "\nVIDEO END: ", playableDuration <= currentTime)
-    // playNext()
-    // }
+    if (item.videos[item?.videoIndex || 0]?.runningTime <= currentTime) {
+      const nextVideoIndex = ((item?.videoIndex || 0) + 1) % item?.videos.length;
+      item.videoIndex = nextVideoIndex;
+      copy[index] = item;
+      setVideos(copy);
+    } else {
+      copy[index] = item;
+      setVideos(copy);
+    }
   }
   const playNext = () => {
     // if (videos[currentVideoIndex]?.repeat) {
@@ -264,7 +250,7 @@ const Home = props => {
                 source={{ uri: ele?.videos[ele?.videoIndex || 0]?.uri?.indexOf("file") >= 0 ? ele?.videos[ele?.videoIndex || 0]?.uri : convertToProxyURL(ele?.videos[ele?.videoIndex || 0]?.uri || "no_video") }}   // Can be a URL or a local file.
                 // source={require(`./local.mp4`)}
                 // source={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
-                controls={false}
+                controls
                 resizeMode={'stretch'}
 
                 // paused={paused}
