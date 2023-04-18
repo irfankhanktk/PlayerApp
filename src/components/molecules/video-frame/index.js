@@ -39,7 +39,7 @@ const VideoFrame = ({
         }
     }
     return (
-        <View style={{ height: height / 2, width: frame?.width }}>
+        <View style={{ height: height / 2, width: '49%' }}>
             <Video
                 source={{ uri: frame?.videos[frame?.videoIndex || 0]?.uri?.indexOf("file") >= 0 ? frameItem?.videos[frame?.videoIndex || 0]?.uri : convertToProxyURL(frameItem?.videos[frame?.videoIndex || 0]?.uri || "no_video") }}   // Can be a URL or a local file.
                 controls
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.primary
     },
     backgroundVideo: {
-        height: 300,
+        height: '99%',
         width: '100%'
     },
 });

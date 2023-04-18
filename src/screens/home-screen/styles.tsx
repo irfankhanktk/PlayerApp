@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+    padding: mvs(2),
   },
   widget: {
     paddingHorizontal: mvs(10),

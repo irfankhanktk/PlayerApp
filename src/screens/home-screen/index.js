@@ -195,6 +195,10 @@ const Home = props => {
     <View style={styles.container}>
       <Row style={{ flexWrap: 'wrap' }}>
         {videos?.map((ele, index) => {
+          if (ele?.type === 'no content')
+            return (<View key={index} style={{ height: height / 2, width: '49%', justifyContent: 'center', alignItems: 'center' }}>
+              <Regular label={'No content'} />
+            </View>)
           return (
             <VideoFrame key={index} frameItem={ele} />
           )
