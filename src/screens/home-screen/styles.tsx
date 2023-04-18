@@ -29,25 +29,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: mvs(20),
     paddingBottom: mvs(100)
   },
-  columnWrapperStyle: {
-    justifyContent: 'space-between',
-  },
-  servicesHeading: {
-    marginHorizontal: mvs(20),
-  },
-  bgImg: {
-    height: mvs(200),
-    paddingHorizontal: mvs(25),
-    paddingVertical: mvs(30),
-  },
   backgroundVideo: {
     height: 300,
     width: '100%'
-    // position: 'absolute',
-    // top: 0,
-    // left: 0,
-    // bottom: 0,
-    // right: 0,
   },
   image: {
 

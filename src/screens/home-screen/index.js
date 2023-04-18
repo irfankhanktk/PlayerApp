@@ -23,20 +23,12 @@ import Medium from 'typography/medium-text';
 import { UTILS } from "utils";
 import { PlayerLottie } from "assets/lottie";
 import { Row } from "components/atoms/row";
+import VideoFrame from "components/molecules/video-frame";
 
 const Home = props => {
-  const video1Ref = React.useRef(null);
-  const video2Ref = React.useRef(null);
   var db = openDatabase({ name: 'VideoDatabase.db' });
-
-  const [currentProgress, setCurrentProgress] = React.useState(0);
-  const videoRef = React.useRef()
   const [playerId, setPlayerId] = React.useState('');
   const [videos, setVideos] = React.useState([])
-  const [currentVideoIndex, setCurrentVideoIndex] = React.useState(0)
-  const [timeLimit, setTimeLimit] = React.useState(20)
-  const [isNext, setIsNext] = React.useState(null)
-  const [paused, setPaused] = React.useState(false)
   const [isConnected, setIsConnected] = React.useState(false)
   const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
@@ -46,10 +38,8 @@ const Home = props => {
       //     // Do some stuff
       //     console.log('disconnected client');
       //   });
-
       getUniqueId().then(id => {
         console.log('player id=>>:::', id);
-
         setPlayerId(id);
         setLoading(false);
       })
@@ -94,12 +84,6 @@ const Home = props => {
     });
     return () => unsubscribe();
   }, [])
-  React.useEffect(() => {
-    if (isNext) {
-      playNext()
-    } else {
-    }
-  }, [isNext])
   // const ActivateDB = (drop = false) => {
   //   db.transaction(function (txn) {
   //     if (drop) {
@@ -191,38 +175,6 @@ const Home = props => {
   React.useEffect(() => {
     getVideos();
   }, [])
-  const onProgress = (progress, item, index) => {
-    const { currentTime, playableDuration } = progress;
-    const copy = [...videos];
-    item.videos[item?.videoIndex || 0].currentProgress = currentTime;
-    // setVideos(copy);
-    // setCurrentProgress(currentTime);
-    // console.log({currentTime})
-    if (item.videos[item?.videoIndex || 0]?.runningTime <= currentTime) {
-      const nextVideoIndex = ((item?.videoIndex || 0) + 1) % item?.videos.length;
-      item.videoIndex = nextVideoIndex;
-      copy[index] = item;
-      setVideos(copy);
-    } else {
-      copy[index] = item;
-      setVideos(copy);
-    }
-  }
-  const playNext = () => {
-    // if (videos[currentVideoIndex]?.repeat) {
-    //   videoRef?.current?.seek(0);
-    // } else
-    //   setCurrentVideoIndex((currentIndex) => (currentIndex + 1) % videos.length)
-  }
-  const onBuffer = (buffer) => {
-    if (buffer?.isBuffering === false) setIsNext(false)
-  }
-  const videoError = (error) => {
-    console.log("=======================VIDEO ERROR===================", error)
-  }
-  const pauseAfter20Seconds = () => {
-  };
-  // return <MoveableView />
   if (loading) {
     return (<Loader />)
   }
@@ -232,7 +184,6 @@ const Home = props => {
         <Lottie
           source={PlayerLottie}
           autoPlay loop style={{ height: height / 2, alignSelf: 'center' }} />
-
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Regular label={'Please Put your player id in the web portal'} />
           <Medium label={playerId} style={{ color: colors.primary, fontSize: mvs(34) }} />
@@ -245,77 +196,11 @@ const Home = props => {
       <Row style={{ flexWrap: 'wrap' }}>
         {videos?.map((ele, index) => {
           return (
-            <View key={index} style={{ height: ele?.height, width: ele?.width, margin: 3 }}>
-              <Video
-                source={{ uri: ele?.videos[ele?.videoIndex || 0]?.uri?.indexOf("file") >= 0 ? ele?.videos[ele?.videoIndex || 0]?.uri : convertToProxyURL(ele?.videos[ele?.videoIndex || 0]?.uri || "no_video") }}   // Can be a URL or a local file.
-                // source={require(`./local.mp4`)}
-                // source={{ uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4' }}
-                controls
-                resizeMode={'stretch'}
-
-                // paused={paused}
-                fullscreen={false}
-                // ref={videoRef}                                      // Store reference
-                onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
-                onError={(e) => videoError(e)}               // Callback when video cannot be loaded
-                onProgress={(progress) => onProgress(progress, ele, index)}
-                onReadyForDisplay={pauseAfter20Seconds}
-                style={styles.backgroundVideo}
-                useTextureView={false}
-                repeat
-                playInBackground={true}
-                disableFocus={true}
-              />
-              {ele?.videos[ele?.videoIndex || 0]?.widgets?.map((w, i) => w?.setting?.delay > ele?.videos[ele?.videoIndex || 0]?.currentProgress ? null : (
-                <TouchableOpacity
-                  key={i}
-                  onPress={() => UTILS.openUrl(w?.url)}
-                  style={[styles.widget, {
-                    left: w?.setting?.position?.x,
-                    top: w?.setting?.position?.y,
-                  }]}>
-                  <Regular label={w?.title} style={{ marginRight: mvs(10) }} color={colors.white} />
-                  <Image source={{ uri: w?.icon }} style={{ height: mvs(25), width: mvs(30) }} />
-                </TouchableOpacity>))}
-            </View>
+            <VideoFrame key={index} frameItem={ele} />
           )
         })}
       </Row>
-      {/* <Video
-        source={{ uri:ele?. videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ?ele?. videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
-        controls={true}
-        resizeMode={'contain'}
 
-        // paused={paused}
-        fullscreen={false}
-        ref={videoRef}                                      // Store reference
-        onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
-        onError={(e) => videoError(e)}               // Callback when video cannot be loaded
-        onProgress={onProgress}
-        onReadyForDisplay={pauseAfter20Seconds}
-        style={styles.backgroundVideo}
-        useTextureView={false}
-        repeat
-        playInBackground={true}
-        disableFocus={true}
-      />
-      <Video
-        source={{ uri:ele?. videos[currentVideoIndex]?.uri?.indexOf("file") >= 0 ?ele?. videos[currentVideoIndex]?.uri : convertToProxyURL(videos[currentVideoIndex]?.uri || "no_video") }}   // Can be a URL or a local file.
-        controls={true}
-        resizeMode={'contain'}
-        // paused={paused}
-        repeat
-        fullscreen={false}
-        ref={video2Ref}                                      // Store reference
-        onBuffer={(b) => onBuffer(b)}                // Callback when remote video is buffering
-        onError={(e) => videoError(e)}               // Callback when video cannot be loaded
-        onProgress={onProgress}
-        onReadyForDisplay={pauseAfter20Seconds}
-        useTextureView={false}
-        style={styles.backgroundVideo}
-        playInBackground={true}
-        disableFocus={true}
-      /> */}
       {/* <View style={styles.marqueeView}>
         <MarqueeText
           style={{ fontSize: mvs(18), color: colors.green }}
@@ -326,17 +211,6 @@ const Home = props => {
           Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry.
         </MarqueeText>
       </View> */}
-      {/* {videos[currentVideoIndex]?.widgets?.map((w, i) => w?.setting?.delay > currentProgress ? null : (
-        <TouchableOpacity
-          key={i}
-          onPress={() => UTILS.openUrl(w?.url)}
-          style={[styles.widget, {
-            left: w?.setting?.position?.x,
-            top: w?.setting?.position?.y,
-          }]}>
-          <Regular label={w?.title} style={{ marginRight: mvs(10) }} color={colors.white} />
-          <Image source={{ uri: w?.icon }} style={{ height: mvs(25), width: mvs(30) }} />
-        </TouchableOpacity>))} */}
     </View>
   );
 };
