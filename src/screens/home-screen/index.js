@@ -54,7 +54,7 @@ const Home = props => {
         }
       })()
 
-    }, 60000);
+    }, 30000);
     return () => {
       clearInterval(intervalId);
     };
@@ -165,7 +165,7 @@ const Home = props => {
   const getVideos = async () => {
     try {
 
-      const res = await getAllOfCollection('video');
+      const res = await getAllOfCollection('videos');
       setVideos(res);
       console.log("get videos response ===> ", res)
     } catch (error) {
@@ -193,18 +193,7 @@ const Home = props => {
     );
   return (
     <View style={styles.container}>
-      <Row style={{ flexWrap: 'wrap' }}>
-        {videos?.map((ele, index) => {
-          if (ele?.type === 'no content')
-            return (<View key={index} style={{ height: height / 2, width: '49%', justifyContent: 'center', alignItems: 'center' }}>
-              <Regular label={'No content'} />
-            </View>)
-          return (
-            <VideoFrame key={index} frameItem={ele} />
-          )
-        })}
-      </Row>
-
+      <VideoFrame frameItem={videos[0] || {}} />
       {/* <View style={styles.marqueeView}>
         <MarqueeText
           style={{ fontSize: mvs(18), color: colors.green }}

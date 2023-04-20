@@ -13,7 +13,8 @@ const VideoFrame = ({
 }) => {
     // console.log('frame==>', frameItem);
     const videoRef = React.useRef(null);
-    const [frame, setFrame] = React.useState({ ...frameItem });
+    const [currentProgressTime, setCurrentProgressTime] = React.useState(0);
+    const frame = { ...frameItem };
     const onBuffer = (buffer) => {
         // if (buffer?.isBuffering === false) setIsNext(false)
     }
@@ -24,28 +25,18 @@ const VideoFrame = ({
     };
     const onProgress = (progress) => {
         const { currentTime, playableDuration } = progress;
-        const copy = { ...frame };
-        copy.videos[frame?.videoIndex || 0].currentProgress = currentTime;
-        if (copy.videos[copy?.videoIndex || 0]?.runningTime <= currentTime) {
-            if (copy.videos?.length === 1) {
-                videoRef?.current?.seek(0);
-            } else {
-                const nextVideoIndex = ((copy?.videoIndex || 0) + 1) % copy?.videos.length;
-                copy.videoIndex = nextVideoIndex;
-                setFrame(copy);
-            }
-        } else {
-            setFrame(copy);
-        }
+        setCurrentProgressTime(currentTime);
+
     }
+    // multple video frame
     return (
-        <View style={{ height: height / 2, width: '49%' }}>
+        <View style={{ flex: 1 }}>
             <Video
-                source={{ uri: frame?.videos[frame?.videoIndex || 0]?.uri?.indexOf("file") >= 0 ? frameItem?.videos[frame?.videoIndex || 0]?.uri : convertToProxyURL(frameItem?.videos[frame?.videoIndex || 0]?.uri || "no_video") }}   // Can be a URL or a local file.
-                controls
-                resizeMode={'stretch'}
+                source={{ uri: frame?.uri?.indexOf("file") >= 0 ? frameItem?.uri : convertToProxyURL(frameItem?.uri || "no_video") }}   // Can be a URL or a local file.
+                controls={false}
+                resizeMode={'cover'}
                 // paused={paused}
-                fullscreen={false}
+                fullscreen={true}
                 ref={videoRef}                                      // Store reference
                 onBuffer={onBuffer}                // Callback when remote video is buffering
                 onError={videoError}               // Callback when video cannot be loaded
@@ -57,7 +48,7 @@ const VideoFrame = ({
                 playInBackground={true}
                 disableFocus={true}
             />
-            {frame?.videos[frame?.videoIndex || 0]?.widgets?.map((w, i) => w?.setting?.delay > frame?.videos[frame?.videoIndex || 0]?.currentProgress ? null : (
+            {frame?.widgets?.map((w, i) => w?.setting?.delay > currentProgressTime ? null : (
                 <TouchableOpacity
                     key={i}
                     onPress={() => UTILS.openUrl(w?.url)}
@@ -86,7 +77,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.primary
     },
     backgroundVideo: {
-        height: '99%',
+        height: '100%',
         width: '100%'
     },
 });
