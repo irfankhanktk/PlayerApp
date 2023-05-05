@@ -31,6 +31,7 @@ const Home = props => {
   const [videos, setVideos] = React.useState([])
   const [isConnected, setIsConnected] = React.useState(false)
   const [loading, setLoading] = React.useState(true);
+  console.log(width, height);
   React.useEffect(() => {
     (async () => {
       // database()
@@ -166,8 +167,10 @@ const Home = props => {
     try {
 
       const res = await getAllOfCollection('videos');
+
       setVideos(res);
-      console.log("get videos response ===> ", res)
+      console.log("get videos response ===> ", res[1]);
+
     } catch (error) {
       fetchAllVideos()
     }
@@ -194,7 +197,7 @@ const Home = props => {
   return (
     <View style={styles.container}>
       <VideoFrame frameItem={videos[0] || {}} />
-      {/* <View style={styles.marqueeView}>
+      <View style={styles.marqueeView}>
         <MarqueeText
           style={{ fontSize: mvs(18), color: colors.green }}
           speed={0.1}
@@ -203,7 +206,7 @@ const Home = props => {
           delay={10000} >
           Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry.
         </MarqueeText>
-      </View> */}
+      </View>
     </View>
   );
 };
