@@ -1,35 +1,34 @@
-import NetInfo from "@react-native-community/netinfo";
+import NetInfo from '@react-native-community/netinfo';
 import database from '@react-native-firebase/database';
-import { colors } from 'config/colors';
-import { height, mvs, width } from 'config/metrices';
+import {colors} from 'config/colors';
+import {height, mvs, width} from 'config/metrices';
 import React from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
-import { getUniqueId } from 'react-native-device-info';
+import {Image, TouchableOpacity, View} from 'react-native';
+import {getUniqueId} from 'react-native-device-info';
 import MarqueeText from 'react-native-marquee';
-import { openDatabase } from 'react-native-sqlite-storage';
+import {openDatabase} from 'react-native-sqlite-storage';
 import Video from 'react-native-video';
 import convertToProxyURL from 'react-native-video-cache';
-import {
-  syncTimeStamp
-} from 'services/api/api-actions';
+import {getPlaylist, syncTimeStamp} from 'services/api/api-actions';
 import Regular from 'typography/regular-text';
 import styles from './styles';
-// let deviceId = 
-import { Loader } from "components/atoms/loader";
-import MarqueeVertically from "components/molecules/marquee-txt";
-import Lottie from "lottie-react-native";
-import { getAllOfCollection, saveData } from 'services/firebase';
+// let deviceId =
+import {Loader} from 'components/atoms/loader';
+import MarqueeVertically from 'components/molecules/marquee-txt';
+import Lottie from 'lottie-react-native';
+import {getAllOfCollection, saveData} from 'services/firebase';
 import Medium from 'typography/medium-text';
-import { UTILS } from "utils";
-import { PlayerLottie } from "assets/lottie";
-import { Row } from "components/atoms/row";
-import VideoFrame from "components/molecules/video-frame";
+import {UTILS} from 'utils';
+import {PlayerLottie} from 'assets/lottie';
+import {Row} from 'components/atoms/row';
+import VideoFrame from 'components/molecules/video-frame';
 
 const Home = props => {
-  var db = openDatabase({ name: 'VideoDatabase.db' });
+  var db = openDatabase({name: 'VideoDatabase.db'});
   const [playerId, setPlayerId] = React.useState('');
-  const [videos, setVideos] = React.useState([])
-  const [isConnected, setIsConnected] = React.useState(false)
+  const [videos, setVideos] = React.useState([]);
+  const [playlist, setPlaylist] = React.useState({});
+  const [isConnected, setIsConnected] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   console.log(width, height);
   React.useEffect(() => {
@@ -43,9 +42,9 @@ const Home = props => {
         console.log('player id=>>:::', id);
         setPlayerId(id);
         setLoading(false);
-      })
-    })()
-  }, [])
+      });
+    })();
+  }, []);
   React.useEffect(() => {
     const intervalId = setInterval(() => {
       console.log(`Current blinking text`);
@@ -53,26 +52,25 @@ const Home = props => {
         if (playerId !== '' && isConnected) {
           // syncTimeStamp(playerId);
         }
-      })()
-
+      })();
     }, 30000);
     return () => {
       clearInterval(intervalId);
     };
-  }, [])
+  }, []);
   React.useEffect(() => {
     if (playerId !== '') {
       database()
-        .ref(`/devices/${playerId}`).on('value', snapshot => {
+        .ref(`/devices/${playerId}`)
+        .on('value', snapshot => {
           const device = snapshot.val();
           if (device) {
-            setIsConnected(true)
+            setIsConnected(true);
           } else {
-            setIsConnected(false)
+            setIsConnected(false);
           }
           console.log('Device data:---===--->>> ', device);
         });
-
     }
     // Stop listening for updates when no longer required
     // return () => database().ref(`/users/${userId}`).off('value', onValueChange);
@@ -80,11 +78,11 @@ const Home = props => {
   React.useEffect(() => {
     // Subscribe
     const unsubscribe = NetInfo.addEventListener(state => {
-      console.log("Connection type", state.type);
-      console.log("Is connected?", state.isConnected);
+      console.log('Connection type', state.type);
+      console.log('Is connected?', state.isConnected);
     });
     return () => unsubscribe();
-  }, [])
+  }, []);
   // const ActivateDB = (drop = false) => {
   //   db.transaction(function (txn) {
   //     if (drop) {
@@ -105,29 +103,23 @@ const Home = props => {
   //   });
   // }
   const fetchAllVideos = () => {
-    console.log("Fetching All Videos from DB...")
-    db.transaction((tx) => {
-      tx.executeSql(
-        'SELECT * FROM table_video',
-        [],
-        (tx, results) => {
-          var temp = [];
-          for (let i = 0; i < results.rows.length; ++i) {
-            temp.push(
-              {
-                title: "VIDEO " + (i + 1),
-                time: 40,
-                uri: `file://${results.rows.item(i).video_path}`,
-                repeat: false,
-              },
-            );
-          }
-          // console.log("ALL VIDEOS===> ", temp)
-          // setVideos(temp)
+    console.log('Fetching All Videos from DB...');
+    db.transaction(tx => {
+      tx.executeSql('SELECT * FROM table_video', [], (tx, results) => {
+        var temp = [];
+        for (let i = 0; i < results.rows.length; ++i) {
+          temp.push({
+            title: 'VIDEO ' + (i + 1),
+            time: 40,
+            uri: `file://${results.rows.item(i).video_path}`,
+            repeat: false,
+          });
         }
-      );
+        // console.log("ALL VIDEOS===> ", temp)
+        // setVideos(temp)
+      });
     });
-  }
+  };
   // const onStoreVideoPath = (video_path, video_name) => {
   //   db.transaction(function (tx) {
   //     tx.executeSql(
@@ -165,46 +157,54 @@ const Home = props => {
   // }
   const getVideos = async () => {
     try {
-
-      const res = await getAllOfCollection('videos');
-
-      setVideos(res);
-      console.log("get videos response ===> ", res[1]);
-
+      const res = await getPlaylist('d73fc2234dfe5869');
+      // setVideos(res);
+      setPlaylist(res?.data);
+      console.log('get videos response ===> ', res);
     } catch (error) {
-      fetchAllVideos()
+      fetchAllVideos();
     }
-  }
+  };
   React.useEffect(() => {
     getVideos();
-  }, [])
+  }, []);
   if (loading) {
-    return (<Loader />)
+    return <Loader />;
   }
   if (!isConnected)
     return (
       <View style={styles.container}>
         <Lottie
           source={PlayerLottie}
-          autoPlay loop style={{ height: height / 2, alignSelf: 'center' }} />
-        <View style={{ flex: 1, alignItems: 'center' }}>
+          autoPlay
+          loop
+          style={{height: height / 2, alignSelf: 'center'}}
+        />
+        <View style={{flex: 1, alignItems: 'center'}}>
           <Regular label={'Please Put your player id in the web portal'} />
-          <Medium label={playerId} style={{ color: colors.primary, fontSize: mvs(34) }} />
+          <Medium
+            label={playerId}
+            style={{color: colors.primary, fontSize: mvs(34)}}
+          />
           <MarqueeVertically />
         </View>
       </View>
     );
   return (
     <View style={styles.container}>
-      <VideoFrame frameItem={videos[0] || {}} />
+      <VideoFrame playlist={playlist} frameItem={playlist?.videos[0] || []} />
       <View style={styles.marqueeView}>
         <MarqueeText
-          style={{ fontSize: mvs(18), color: colors.green }}
+          style={{fontSize: mvs(18), color: colors.green}}
           speed={0.1}
           marqueeOnStart={true}
           loop={true}
-          delay={10000} >
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry and typesetting industry.
+          delay={10000}>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry and typesetting industry. Lorem Ipsum is simply dummy text of
+          the printing and typesetting industry and typesetting industry. Lorem
+          Ipsum is simply dummy text of the printing and typesetting industry
+          and typesetting industry.
         </MarqueeText>
       </View>
     </View>

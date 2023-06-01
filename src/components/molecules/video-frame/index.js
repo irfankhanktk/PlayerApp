@@ -9,7 +9,7 @@ import Regular from 'typography/regular-text';
 import {UTILS} from 'utils';
 import {navigate} from 'navigation/navigation-ref';
 
-const VideoFrame = ({frameItem, props}) => {
+const VideoFrame = ({frameItem, playlist, props}) => {
   // console.log('frame==>', frameItem);
   const videoRef = React.useRef(null);
   const [currentProgressTime, setCurrentProgressTime] = React.useState(0);
@@ -29,11 +29,17 @@ const VideoFrame = ({frameItem, props}) => {
   return (
     <View style={{flex: 1}}>
       <Video
+        // source={{
+        //   uri:
+        //     frame?.video_url?.indexOf('file') >= 0
+        //       ? frameItem?.video_url
+        //       : convertToProxyURL(frameItem?.video_url || 'no_video'),
+        // }} // Can be a URL or a local file.
         source={{
-          uri:
-            frame?.uri?.indexOf('file') >= 0
-              ? frameItem?.uri
-              : convertToProxyURL(frameItem?.uri || 'no_video'),
+          uri: convertToProxyURL(
+            'http://70.35.197.229:3000/editor/admin/files/1681994082.mp4' ||
+              'no_video',
+          ),
         }} // Can be a URL or a local file.
         controls={false}
         resizeMode={'cover'}
