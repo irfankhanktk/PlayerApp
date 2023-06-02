@@ -36,10 +36,7 @@ const VideoFrame = ({frameItem, playlist, props}) => {
         //       : convertToProxyURL(frameItem?.video_url || 'no_video'),
         // }} // Can be a URL or a local file.
         source={{
-          uri: convertToProxyURL(
-            'http://70.35.197.229:3000/editor/admin/files/1681994082.mp4' ||
-              'no_video',
-          ),
+          uri: convertToProxyURL(frame?.video_url || 'no_video'),
         }} // Can be a URL or a local file.
         controls={false}
         resizeMode={'cover'}

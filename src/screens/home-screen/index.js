@@ -186,15 +186,17 @@ const Home = props => {
             label={playerId}
             style={{color: colors.primary, fontSize: mvs(34)}}
           />
-          <MarqueeVertically />
         </View>
       </View>
     );
   return (
     <View style={styles.container}>
-      <VideoFrame playlist={playlist} frameItem={playlist?.videos[0] || []} />
+      {playlist?.videos && (
+        <VideoFrame playlist={playlist} frameItem={playlist?.videos[1] || {}} />
+      )}
       <View style={styles.marqueeView}>
-        <MarqueeText
+        <MarqueeVertically />
+        {/* <MarqueeText
           style={{fontSize: mvs(18), color: colors.green}}
           speed={0.1}
           marqueeOnStart={true}
@@ -205,7 +207,7 @@ const Home = props => {
           the printing and typesetting industry and typesetting industry. Lorem
           Ipsum is simply dummy text of the printing and typesetting industry
           and typesetting industry.
-        </MarqueeText>
+        </MarqueeText> */}
       </View>
     </View>
   );
