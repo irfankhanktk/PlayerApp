@@ -1,33 +1,40 @@
-import {colors} from 'config/colors';
-import {height, mvs} from 'config/metrices';
+import { colors } from 'config/colors';
+import { height, mvs } from 'config/metrices';
 import React from 'react';
-import {Image} from 'react-native';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import { Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Video from 'react-native-video';
 import convertToProxyURL from 'react-native-video-cache';
 import Regular from 'typography/regular-text';
-import {UTILS} from 'utils';
-import {navigate} from 'navigation/navigation-ref';
+import { UTILS } from 'utils';
+import { navigate } from 'navigation/navigation-ref';
 
-const VideoFrame = ({frameItem, playlist, props}) => {
-  // console.log('frame==>', frameItem);
+const VideoFrame = ({ frameItem, setNextIndex = (index) => { }, nextIndex, playlist, props }) => {
   const videoRef = React.useRef(null);
   const [currentProgressTime, setCurrentProgressTime] = React.useState(0);
-  const frame = {...frameItem};
+  const frame = { ...frameItem };
   const onBuffer = buffer => {
     // if (buffer?.isBuffering === false) setIsNext(false)
   };
   const videoError = error => {
     console.log('=======================VIDEO ERROR===================', error);
   };
-  const pauseAfter20Seconds = () => {};
+  const pauseAfter20Seconds = () => { };
   const onProgress = progress => {
-    const {currentTime, playableDuration} = progress;
-    setCurrentProgressTime(currentTime);
+    const { currentTime, playableDuration } = progress;
+    // console.log('playableDuration::', playableDuration);
+    // console.log('currentTime::', currentTime);
+    if (Math.round(currentTime) >= Math.round(playableDuration)) {
+      setNextIndex(nextIndex < (playlist?.videos?.length - 1) ? nextIndex + 1 : 0);
+      setCurrentProgressTime(0);
+    } else {
+
+      setCurrentProgressTime(currentTime);
+    }
   };
   // multple video frame
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <Video
         // source={{
         //   uri:
@@ -36,7 +43,7 @@ const VideoFrame = ({frameItem, playlist, props}) => {
         //       : convertToProxyURL(frameItem?.video_url || 'no_video'),
         // }} // Can be a URL or a local file.
         source={{
-          uri: convertToProxyURL(frame?.video_url || 'no_video'),
+          uri: convertToProxyURL(frameItem?.video_url || 'no_video'),
         }} // Can be a URL or a local file.
         controls={false}
         resizeMode={'cover'}
@@ -53,7 +60,7 @@ const VideoFrame = ({frameItem, playlist, props}) => {
         playInBackground={true}
         disableFocus={true}
       />
-      {frame?.widgets?.map((w, i) =>
+      {frameItem?.widgets?.map((w, i) =>
         w?.setting?.delay > currentProgressTime ? null : (
           <TouchableOpacity
             key={i}
@@ -72,12 +79,12 @@ const VideoFrame = ({frameItem, playlist, props}) => {
             ]}>
             <Regular
               label={w?.title}
-              style={{marginRight: mvs(10)}}
+              style={{ marginRight: mvs(10) }}
               color={colors.white}
             />
             <Image
-              source={{uri: w?.icon}}
-              style={{height: mvs(25), width: mvs(30)}}
+              source={{ uri: w?.icon }}
+              style={{ height: mvs(25), width: mvs(30) }}
             />
           </TouchableOpacity>
         ),

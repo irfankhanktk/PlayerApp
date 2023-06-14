@@ -1,39 +1,78 @@
-const playlist = {
-    videos: [
-        {
-            title: 'video-title-1',
-            url: 'https://jskdjf.mp4',
-            widgets: [
-                {
-                    icon: 'https://icon',
-                    title: 'widget-1',
-                    url: 'https://widget url here',
-                    setting: {
-                        delay: 30,
-                        position: {
-                            x: 50,
-                            y: 60
-                        }
-                    }
-                },
-                {
-                    icon: 'https://icon2',
-                    title: 'widget-2',
-                    url: 'https://widget url-2 here',
-                    setting: {
-                        delay: 60,
-                        position: {
-                            x: 50,
-                            y: 100
-                        }
-                    }
-                }
-            ]
-        }
-    ],
-    playlist: {
-        text: 'animated text here',
-        start_time: '',
-        end_time: '',
-    }
+export const PLAYLIST = {
+	"videos": [
+		{
+			"video_title": "video-title-1",
+			"video_url": "https://static.videezy.com/system/resources/previews/000/018/793/original/Bacteria-blue.mp4",
+			"widgets": [
+				{
+					"icon": "https://w7.pngwing.com/pngs/561/460/png-transparen…ook-facebook-logo-social-media-icon-thumbnail.png",
+					"title": "Facebook",
+					"url": "https://fb.watch/l9ivQifALY/",
+					"setting": {
+						"delay": 5,
+						"position": {
+							"x": 50,
+							"y": 60
+						}
+					}
+				},
+				{
+					"icon": "https://w7.pngwing.com/pngs/679/48/png-transparent…outube-icon-angle-rectangle-desktop-wallpaper.png",
+					"title": "Youtube",
+					"url": "https://www.youtube.com/watch?v=Gvf5fR_NPrs",
+					"setting": {
+						"delay": 10,
+						"position": {
+							"x": 50,
+							"y": 100
+						}
+					}
+				}
+			]
+		},
+		{
+			"video_title": "video-title-2",
+			"video_url": "https://static.videezy.com/system/resources/previews/000/009/135/original/fvbhd0209.mp4",
+			"widgets": [
+				{
+					"icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEA…2uX3/c9N8qZXDjkO1YAD3P3iS1YcqUEqBAAAAAElFTkSuQmCC",
+					"title": "Facebook",
+					"url": "https://fb.watch/l9ivQifALY/",
+					"setting": {
+						"delay": 15,
+						"position": {
+							"x": 50,
+							"y": 400
+						}
+					}
+				},
+				{
+					"icon": "https://cdn-icons-png.flaticon.com/512/5219/5219563.png",
+					"title": "Youtube",
+					"url": "https://www.youtube.com/watch?v=Gvf5fR_NPrs",
+					"setting": {
+						"delay": 11,
+						"position": {
+							"x": 50,
+							"y": 300
+						}
+					}
+				}
+			]
+		}
+	],
+	"playlist": {
+		"playlist_title": "IrfanPlayer",
+		"playlist_start_time": "2023-06-01 16:24:00",
+		"playlist_end_time": "2023-06-28 19:24:00"
+	},
+	"message": {
+		"message_title": "1",
+		"message": "Her is marqueee text",
+		"delay": 1000,
+		"color": "#c82947",
+		"position": "left",
+		"direction": "Top to Bottom"
+	},
+	"code": 202
 }

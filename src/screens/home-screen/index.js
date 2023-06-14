@@ -1,33 +1,30 @@
 import NetInfo from '@react-native-community/netinfo';
 import database from '@react-native-firebase/database';
-import {colors} from 'config/colors';
-import {height, mvs, width} from 'config/metrices';
+import { colors } from 'config/colors';
+import { height, mvs, width } from 'config/metrices';
 import React from 'react';
-import {Image, TouchableOpacity, View} from 'react-native';
-import {getUniqueId} from 'react-native-device-info';
+import { View } from 'react-native';
+import { getUniqueId } from 'react-native-device-info';
 import MarqueeText from 'react-native-marquee';
-import {openDatabase} from 'react-native-sqlite-storage';
-import Video from 'react-native-video';
-import convertToProxyURL from 'react-native-video-cache';
-import {getPlaylist, syncTimeStamp} from 'services/api/api-actions';
+import { openDatabase } from 'react-native-sqlite-storage';
+import { getPlaylist } from 'services/api/api-actions';
 import Regular from 'typography/regular-text';
 import styles from './styles';
 // let deviceId =
-import {Loader} from 'components/atoms/loader';
-import MarqueeVertically from 'components/molecules/marquee-txt';
-import Lottie from 'lottie-react-native';
-import {getAllOfCollection, saveData} from 'services/firebase';
-import Medium from 'typography/medium-text';
-import {UTILS} from 'utils';
-import {PlayerLottie} from 'assets/lottie';
-import {Row} from 'components/atoms/row';
+import { PlayerLottie } from 'assets/lottie';
+import { Loader } from 'components/atoms/loader';
 import VideoFrame from 'components/molecules/video-frame';
+import { PLAYLIST } from 'config/playlist';
+import Lottie from 'lottie-react-native';
+import Medium from 'typography/medium-text';
+import Marquee from 'components/molecules/marquee-txt';
 
 const Home = props => {
-  var db = openDatabase({name: 'VideoDatabase.db'});
+  var db = openDatabase({ name: 'VideoDatabase.db' });
   const [playerId, setPlayerId] = React.useState('');
   const [videos, setVideos] = React.useState([]);
-  const [playlist, setPlaylist] = React.useState({});
+  const [playlist, setPlaylist] = React.useState(PLAYLIST);
+  const [nextIndex, setNextIndex] = React.useState(0);
   const [isConnected, setIsConnected] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   console.log(width, height);
@@ -83,83 +80,12 @@ const Home = props => {
     });
     return () => unsubscribe();
   }, []);
-  // const ActivateDB = (drop = false) => {
-  //   db.transaction(function (txn) {
-  //     if (drop) {
-  //       console.log("Dropping Database Table")
-  //       txn.executeSql('DROP TABLE IF EXISTS table_video', []);
-  //     }
-  //     // console.log("CREATING or OPENING Database Table")
-  //     txn.executeSql(
-  //       'CREATE TABLE IF NOT EXISTS table_video(video_id INTEGER PRIMARY KEY AUTOINCREMENT,video_name VARCHAR(100), video_path VARCHAR(255))',
-  //       [],
-  //       (tx, success) => {
-  //         console.log("DB OK")
-  //       },
-  //       (tx, error) => {
-  //         console.log("ERROR create table====> ", error)
-  //       },
-  //     );
-  //   });
-  // }
-  const fetchAllVideos = () => {
-    console.log('Fetching All Videos from DB...');
-    db.transaction(tx => {
-      tx.executeSql('SELECT * FROM table_video', [], (tx, results) => {
-        var temp = [];
-        for (let i = 0; i < results.rows.length; ++i) {
-          temp.push({
-            title: 'VIDEO ' + (i + 1),
-            time: 40,
-            uri: `file://${results.rows.item(i).video_path}`,
-            repeat: false,
-          });
-        }
-        // console.log("ALL VIDEOS===> ", temp)
-        // setVideos(temp)
-      });
-    });
-  };
-  // const onStoreVideoPath = (video_path, video_name) => {
-  //   db.transaction(function (tx) {
-  //     tx.executeSql(
-  //       'INSERT INTO table_video (video_path) VALUES (?)',
-  //       [video_path],
-  //       (tx, results) => {
-  //         console.log('DB Write Effect Rows===> ', results.rowsAffected);
-  //         if (results.rowsAffected > 0) {
-  //           console.log("Download Successfully - DB")
-  //         } else {
-  //           console.log("Download Failed - DB")
-  //         }
-  //       },
-  //       (tx, error) => {
-  //         console.log("Store in DB failed ===> ", { video_name, video_path })
-  //       }
-  //     );
-  //   });
-  // }
-  // const onDownloadVideo = (url, name) => {
-  //   if (!url) return console.log("Please Provide URL")
-  //   if (!name) {
-  //     let index = url.lastIndexOf("/")
-  //     name = url.slice(index + 1)
-  //   }
-  //   RNFS.downloadFile({
-  //     fromUrl: url,
-  //     toFile: `${RNFS.DocumentDirectoryPath}/${name}`,
-  //   }).promise.then((r) => {
-  //     console.log("DOWNLOADED=====> ", r)
-  //     onStoreVideoPath(`${RNFS.DocumentDirectoryPath}/${name}`, name)
-  //   }).catch((error) => {
-  //     console.log("DOWNLOAD ERROR====> ", error)
-  //   })
-  // }
+
   const getVideos = async () => {
     try {
       const res = await getPlaylist('d73fc2234dfe5869');
       // setVideos(res);
-      setPlaylist(res?.data);
+      // setPlaylist(res?.data);
       console.log('get videos response ===> ', res);
     } catch (error) {
       fetchAllVideos();
@@ -171,20 +97,20 @@ const Home = props => {
   if (loading) {
     return <Loader />;
   }
-  if (!isConnected)
+  if (isConnected)
     return (
       <View style={styles.container}>
         <Lottie
           source={PlayerLottie}
           autoPlay
           loop
-          style={{height: height / 2, alignSelf: 'center'}}
+          style={{ height: height / 2, alignSelf: 'center' }}
         />
-        <View style={{flex: 1, alignItems: 'center'}}>
+        <View style={{ flex: 1, alignItems: 'center' }}>
           <Regular label={'Please Put your player id in the web portal'} />
           <Medium
             label={playerId}
-            style={{color: colors.primary, fontSize: mvs(34)}}
+            style={{ color: colors.primary, fontSize: mvs(34) }}
           />
         </View>
       </View>
@@ -192,12 +118,21 @@ const Home = props => {
   return (
     <View style={styles.container}>
       {playlist?.videos && (
-        <VideoFrame playlist={playlist} frameItem={playlist?.videos[1] || {}} />
+        <VideoFrame
+          nextIndex={nextIndex}
+          setNextIndex={setNextIndex}
+          playlist={playlist}
+          frameItem={playlist?.videos[nextIndex] || {}}
+        />
       )}
       <View style={styles.marqueeView}>
-        <MarqueeVertically />
+        <Marquee
+          type={'topToBottom'}
+          delay={playlist?.message?.delay}
+          content={playlist?.message?.message} />
+        {/* <MarqueeVertically /> */}
         {/* <MarqueeText
-          style={{fontSize: mvs(18), color: colors.green}}
+          style={{ fontSize: mvs(18), color: colors.green }}
           speed={0.1}
           marqueeOnStart={true}
           loop={true}

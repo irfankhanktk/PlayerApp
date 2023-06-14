@@ -1,53 +1,83 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, ScrollView} from 'react-native';
-import Regular from 'typography/regular-text';
+import { colors } from 'config/colors';
+import React, { useEffect, useRef } from 'react';
+import { Animated, StyleSheet, View } from 'react-native';
 
-const MarqueeVertically = () => {
-  const [offset, setOffset] = useState(0);
-  const [contentHeight, setContentHeight] = useState(0);
-  const [containerHeight, setContainerHeight] = useState(0);
+const Marquee = ({ content, delay = 1000, type }) => {
+  const containerWidth = useRef(0);
+  const contentWidth = useRef(0);
+  const translateValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setOffset(offset => (offset > 300 ? 0 : offset + 1));
-    }, 50);
+    if (type === 'leftToRight' || type === 'rightToLeft') {
+      // Calculate the total width of the content
+      contentWidth.current = containerWidth.current + 2 * content.length;
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+      // Set the initial position of the content
+      translateValue.setValue(type === 'leftToRight' ? -contentWidth.current : containerWidth.current);
 
-  const handleContentSizeChange = (width, height) => {
-    setContentHeight(height);
-  };
+      // Animate the content continuously
+      Animated.loop(
+        Animated.timing(translateValue, {
+          toValue: type === 'leftToRight' ? containerWidth.current : -contentWidth.current,
+          duration: delay,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else if (type === 'topToBottom' || type === 'bottomToTop') {
+      // Calculate the total height of the content
+      contentWidth.current = containerWidth.current + 2 * content.length;
 
-  const handleContainerLayout = event => {
-    setContainerHeight(event.nativeEvent.layout.height);
-  };
+      // Set the initial position of the content
+      translateValue.setValue(type === 'topToBottom' ? -contentWidth.current : containerWidth.current);
 
-  const contentStyle = {
-    paddingRight: offset % contentHeight || 0,
+      // Animate the content continuously
+      Animated.loop(
+        Animated.timing(translateValue, {
+          toValue: type === 'topToBottom' ? containerWidth.current : -contentWidth.current,
+          duration: delay,
+          useNativeDriver: true,
+        })
+      ).start();
+    }
+  }, [content, type, translateValue]);
+
+  const renderContent = () => {
+    if (type === 'leftToRight' || type === 'rightToLeft') {
+      return (
+        <Animated.Text style={[styles.content, { transform: [{ translateX: translateValue }] }]}>
+          {content}
+        </Animated.Text>
+      );
+    } else if (type === 'topToBottom' || type === 'bottomToTop') {
+      return (
+        <Animated.Text style={[styles.content, { transform: [{ translateY: translateValue }] }]}>
+          {content}
+        </Animated.Text>
+      );
+    }
   };
 
   return (
-    <View style={{height: 300}} onLayout={handleContainerLayout}>
-      <ScrollView
-        contentContainerStyle={contentStyle}
-        onContentSizeChange={handleContentSizeChange}>
-        <Regular
-          numberOfLines={1}
-          style={{
-            // flex: 1,
-            width: 200,
-            height: 200,
-            // backgroundColor: 'blue',
-            // transform: [{ rotate: '90deg' }],
-          }}
-          label={'Your marquee text goes here'}
-        />
-      </ScrollView>
+    <View
+      style={styles.container}
+      onLayout={(event) => {
+        containerWidth.current = event.nativeEvent.layout.width;
+      }}
+    >
+      {renderContent()}
     </View>
   );
 };
 
-export default MarqueeVertically;
+const styles = StyleSheet.create({
+  container: {
+    // overflow: 'hidden',
+    // backgroundColor: 'red'
+  },
+  content: {
+    fontSize: 16,
+    color: colors.white,
+  },
+});
+
+export default Marquee;

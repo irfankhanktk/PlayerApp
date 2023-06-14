@@ -45,9 +45,9 @@ const styles = StyleSheet.create({
   marqueeView: {
     position: "absolute",
     bottom: mvs(50),
-    right: mvs(50),
-    left: mvs(50),
-    backgroundColor: `${colors.black}60`
+    right: mvs(20),
+    left: mvs(20),
+    // backgroundColor: `${colors.black}60`
   }
 
 
