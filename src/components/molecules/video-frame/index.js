@@ -8,6 +8,7 @@ import convertToProxyURL from 'react-native-video-cache';
 import Regular from 'typography/regular-text';
 import { UTILS } from 'utils';
 import { navigate } from 'navigation/navigation-ref';
+import IconPositions from '../icon-positions';
 
 const VideoFrame = ({ frameItem, setNextIndex = (index) => { }, nextIndex, playlist, props }) => {
   const videoRef = React.useRef(null);
@@ -62,36 +63,39 @@ const VideoFrame = ({ frameItem, setNextIndex = (index) => { }, nextIndex, playl
       />
       {frameItem?.widgets?.map((w, i) =>
         w?.setting?.delay > currentProgressTime ? null : (
-          <TouchableOpacity
-            key={i}
-            // onPress={() => UTILS.openUrl(w?.url)}
-            onPress={() =>
-              navigate('WebViewScreen', {
-                url: w?.url,
-              })
-            }
-            style={[
-              styles.widget,
-              {
-                left: w?.setting?.position?.x,
-                top: w?.setting?.position?.y,
-              },
-            ]}>
-            <Regular
-              label={w?.title}
-              style={{ marginRight: mvs(10) }}
-              color={colors.white}
-            />
-            <Image
-              source={{ uri: w?.icon }}
-              style={{ height: mvs(25), width: mvs(30) }}
-            />
-          </TouchableOpacity>
+          <IconPositions key={i} onPress={() => UTILS.openUrl(w?.url)} x={100} y={200} direction={'left'} >
+            <TouchableOpacity
+              key={i}
+              // onPress={() => UTILS.openUrl(w?.url)}
+              onPress={() =>
+                navigate('WebViewScreen', {
+                  url: w?.url,
+                })
+              }
+              style={[
+                styles.widget,
+                {
+                  left: w?.setting?.position?.x,
+                  top: w?.setting?.position?.y,
+                },
+              ]}>
+              <Regular
+                label={w?.title}
+                style={{ marginRight: mvs(10) }}
+                color={colors.white}
+              />
+              <Image
+                source={{ uri: w?.icon }}
+                style={{ height: mvs(25), width: mvs(30) }}
+              />
+            </TouchableOpacity>
+          </IconPositions>
         ),
       )}
     </View>
   );
 };
+
 export default React.memo(VideoFrame);
 const styles = StyleSheet.create({
   container: {

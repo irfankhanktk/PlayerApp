@@ -1,83 +1,57 @@
 import { colors } from 'config/colors';
+import { height, mvs, width } from 'config/metrices';
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
+import Regular from 'typography/regular-text';
 
-const Marquee = ({ content, delay = 1000, type }) => {
-  const containerWidth = useRef(0);
-  const contentWidth = useRef(0);
-  const translateValue = useRef(new Animated.Value(0)).current;
+const IconPositions = ({ type = 'top' }) => {
+  const animationValue = useRef(new Animated.Value(type === 'top' ? 0 : width)).current;
 
   useEffect(() => {
-    if (type === 'leftToRight' || type === 'rightToLeft') {
-      // Calculate the total width of the content
-      contentWidth.current = containerWidth.current + 2 * content.length;
-
-      // Set the initial position of the content
-      translateValue.setValue(type === 'leftToRight' ? -contentWidth.current : containerWidth.current);
-
-      // Animate the content continuously
-      Animated.loop(
-        Animated.timing(translateValue, {
-          toValue: type === 'leftToRight' ? containerWidth.current : -contentWidth.current,
-          duration: delay,
+    const translateY = Animated.loop(
+      Animated.sequence([
+        Animated.timing(animationValue, {
+          toValue: type === 'top' ? -height : -width,
+          duration: 4000,
           useNativeDriver: true,
-        })
-      ).start();
-    } else if (type === 'topToBottom' || type === 'bottomToTop') {
-      // Calculate the total height of the content
-      contentWidth.current = containerWidth.current + 2 * content.length;
-
-      // Set the initial position of the content
-      translateValue.setValue(type === 'topToBottom' ? -contentWidth.current : containerWidth.current);
-
-      // Animate the content continuously
-      Animated.loop(
-        Animated.timing(translateValue, {
-          toValue: type === 'topToBottom' ? containerWidth.current : -contentWidth.current,
-          duration: delay,
+        }),
+        Animated.timing(animationValue, {
+          toValue: type === 'top' ? 0 : width,
+          duration: 0,
           useNativeDriver: true,
-        })
-      ).start();
-    }
-  }, [content, type, translateValue]);
+        }),
+      ])
+    );
 
-  const renderContent = () => {
-    if (type === 'leftToRight' || type === 'rightToLeft') {
-      return (
-        <Animated.Text style={[styles.content, { transform: [{ translateX: translateValue }] }]}>
-          {content}
-        </Animated.Text>
-      );
-    } else if (type === 'topToBottom' || type === 'bottomToTop') {
-      return (
-        <Animated.Text style={[styles.content, { transform: [{ translateY: translateValue }] }]}>
-          {content}
-        </Animated.Text>
-      );
-    }
-  };
+    translateY.start();
+
+    return () => {
+      translateY.stop();
+    };
+  }, [animationValue]);
 
   return (
-    <View
-      style={styles.container}
-      onLayout={(event) => {
-        containerWidth.current = event.nativeEvent.layout.width;
-      }}
-    >
-      {renderContent()}
-    </View>
+    // <View style={styles.container}>
+    <Animated.View style={[styles.icon, { transform: [type === 'top' ? { translateY: animationValue } : { translateX: animationValue }] }]}>
+      <View style={{ width: width, paddingHorizontal: mvs(15), paddingBottom: mvs(20) }}>
+
+        <Regular style={{ flex: 1 }} numberOfLines={3} color={colors.white} label={'o achieve the desired animation of sliding the icon from all directions to the specified x and y position, you can modify here please'} />
+      </View>
+    </Animated.View>
+    // </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    // overflow: 'hidden',
-    // backgroundColor: 'red'
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
   },
-  content: {
-    fontSize: 16,
-    color: colors.white,
+  icon: {
+    position: 'absolute',
   },
 });
 
-export default Marquee;
+export default IconPositions;

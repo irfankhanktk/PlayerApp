@@ -68,7 +68,7 @@ export const PLAYLIST = {
 	},
 	"message": {
 		"message_title": "1",
-		"message": "Her is marqueee text",
+		"message": "Her is marqueee text , you can change it from all directions",
 		"delay": 1000,
 		"color": "#c82947",
 		"position": "left",

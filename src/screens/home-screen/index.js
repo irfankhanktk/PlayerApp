@@ -18,6 +18,7 @@ import { PLAYLIST } from 'config/playlist';
 import Lottie from 'lottie-react-native';
 import Medium from 'typography/medium-text';
 import Marquee from 'components/molecules/marquee-txt';
+import IconPositions from 'components/molecules/icon-positions';
 
 const Home = props => {
   var db = openDatabase({ name: 'VideoDatabase.db' });
@@ -115,6 +116,7 @@ const Home = props => {
         </View>
       </View>
     );
+  // return (<IconPositions x={100} y={200} direction={'left'} />);
   return (
     <View style={styles.container}>
       {playlist?.videos && (
@@ -122,27 +124,15 @@ const Home = props => {
           nextIndex={nextIndex}
           setNextIndex={setNextIndex}
           playlist={playlist}
+          speed={5}
           frameItem={playlist?.videos[nextIndex] || {}}
         />
       )}
       <View style={styles.marqueeView}>
         <Marquee
-          type={'topToBottom'}
+          type={'left'}
           delay={playlist?.message?.delay}
           content={playlist?.message?.message} />
-        {/* <MarqueeVertically /> */}
-        {/* <MarqueeText
-          style={{ fontSize: mvs(18), color: colors.green }}
-          speed={0.1}
-          marqueeOnStart={true}
-          loop={true}
-          delay={10000}>
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry and typesetting industry. Lorem Ipsum is simply dummy text of
-          the printing and typesetting industry and typesetting industry. Lorem
-          Ipsum is simply dummy text of the printing and typesetting industry
-          and typesetting industry.
-        </MarqueeText> */}
       </View>
     </View>
   );
