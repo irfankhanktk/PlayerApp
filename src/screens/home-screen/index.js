@@ -5,7 +5,6 @@ import { height, mvs, width } from 'config/metrices';
 import React from 'react';
 import { View } from 'react-native';
 import { getUniqueId } from 'react-native-device-info';
-import MarqueeText from 'react-native-marquee';
 import { openDatabase } from 'react-native-sqlite-storage';
 import { getPlaylist } from 'services/api/api-actions';
 import Regular from 'typography/regular-text';
@@ -13,12 +12,12 @@ import styles from './styles';
 // let deviceId =
 import { PlayerLottie } from 'assets/lottie';
 import { Loader } from 'components/atoms/loader';
+import VerticalMarquee from 'components/molecules/marquee-txt/vertical-morquee';
 import VideoFrame from 'components/molecules/video-frame';
 import { PLAYLIST } from 'config/playlist';
 import Lottie from 'lottie-react-native';
 import Medium from 'typography/medium-text';
-import Marquee from 'components/molecules/marquee-txt';
-import IconPositions from 'components/molecules/icon-positions';
+import HorizontalMarquee from 'components/molecules/marquee-txt/horizontal-marquee';
 
 const Home = props => {
   var db = openDatabase({ name: 'VideoDatabase.db' });
@@ -129,8 +128,12 @@ const Home = props => {
         />
       )}
       <View style={styles.marqueeView}>
-        <Marquee
-          type={'left'}
+        <HorizontalMarquee
+          type={'right'}
+          delay={playlist?.message?.delay}
+          content={playlist?.message?.message} />
+        <VerticalMarquee
+          type={'bottom'}
           delay={playlist?.message?.delay}
           content={playlist?.message?.message} />
       </View>

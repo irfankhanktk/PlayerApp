@@ -2,7 +2,7 @@ export const PLAYLIST = {
 	"videos": [
 		{
 			"video_title": "video-title-1",
-			"video_url": "https://static.videezy.com/system/resources/previews/000/018/793/original/Bacteria-blue.mp4",
+			"video_url": "https://static.videezy.com/system/resources/previews/000/012/245/original/Fireworks_69_-_4K_res.mp4",
 			"widgets": [
 				{
 					"icon": "https://w7.pngwing.com/pngs/561/460/png-transparen…ook-facebook-logo-social-media-icon-thumbnail.png",
@@ -32,7 +32,7 @@ export const PLAYLIST = {
 		},
 		{
 			"video_title": "video-title-2",
-			"video_url": "https://static.videezy.com/system/resources/previews/000/009/135/original/fvbhd0209.mp4",
+			"video_url": "https://static.videezy.com/system/resources/previews/000/009/585/original/4k0199.mp4",
 			"widgets": [
 				{
 					"icon": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEA…2uX3/c9N8qZXDjkO1YAD3P3iS1YcqUEqBAAAAAElFTkSuQmCC",
