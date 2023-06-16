@@ -88,7 +88,6 @@ const Home = props => {
       // setPlaylist(res?.data);
       console.log('get videos response ===> ', res);
     } catch (error) {
-      fetchAllVideos();
     }
   };
   React.useEffect(() => {
@@ -97,7 +96,7 @@ const Home = props => {
   if (loading) {
     return <Loader />;
   }
-  if (isConnected)
+  if (!isConnected)
     return (
       <View style={styles.container}>
         <Lottie

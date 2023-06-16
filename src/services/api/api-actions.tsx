@@ -23,7 +23,12 @@ export const getPlaylist = async (player_id: string) => {
     return res;
   } catch (error: any) {
     console.log('error in getHomeData', UTILS.returnError(error));
-    Alert.alert('', UTILS.returnError(error));
+    if (UTILS.returnError(error) === 'Network Error') {
+      Alert.alert('Network Error', 'No internet connection; saved videos loaded from local cache.');
+    } else {
+
+      Alert.alert('', UTILS.returnError(error));
+    }
   }
 };
 
