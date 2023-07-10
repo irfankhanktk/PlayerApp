@@ -1,26 +1,24 @@
 import NetInfo from '@react-native-community/netinfo';
 import database from '@react-native-firebase/database';
-import { colors } from 'config/colors';
-import { height, mvs, width } from 'config/metrices';
+import {colors} from 'config/colors';
+import {height, mvs, width} from 'config/metrices';
 import React from 'react';
-import { View } from 'react-native';
-import { getUniqueId } from 'react-native-device-info';
-import { openDatabase } from 'react-native-sqlite-storage';
-import { getPlaylist } from 'services/api/api-actions';
+import {View} from 'react-native';
+import {getUniqueId} from 'react-native-device-info';
+import {getPlaylist, syncTimeStamp} from 'services/api/api-actions';
 import Regular from 'typography/regular-text';
 import styles from './styles';
 // let deviceId =
-import { PlayerLottie } from 'assets/lottie';
-import { Loader } from 'components/atoms/loader';
+import {PlayerLottie} from 'assets/lottie';
+import {Loader} from 'components/atoms/loader';
 import VerticalMarquee from 'components/molecules/marquee-txt/vertical-morquee';
 import VideoFrame from 'components/molecules/video-frame';
-import { PLAYLIST } from 'config/playlist';
+import {PLAYLIST} from 'config/playlist';
 import Lottie from 'lottie-react-native';
 import Medium from 'typography/medium-text';
 import HorizontalMarquee from 'components/molecules/marquee-txt/horizontal-marquee';
 
 const Home = props => {
-  var db = openDatabase({ name: 'VideoDatabase.db' });
   const [playerId, setPlayerId] = React.useState('');
   const [videos, setVideos] = React.useState([]);
   const [playlist, setPlaylist] = React.useState(PLAYLIST);
@@ -47,7 +45,7 @@ const Home = props => {
       console.log(`Current blinking text`);
       (() => {
         if (playerId !== '' && isConnected) {
-          // syncTimeStamp(playerId);
+          syncTimeStamp(playerId);
         }
       })();
     }, 30000);
@@ -83,12 +81,11 @@ const Home = props => {
 
   const getVideos = async () => {
     try {
-      const res = await getPlaylist('d73fc2234dfe5869');
+      const res = await getPlaylist(playerId);
       // setVideos(res);
       // setPlaylist(res?.data);
       console.log('get videos response ===> ', res);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
   React.useEffect(() => {
     getVideos();
@@ -103,13 +100,14 @@ const Home = props => {
           source={PlayerLottie}
           autoPlay
           loop
-          style={{ height: height / 2, alignSelf: 'center' }}
+          style={{height: height / 2, alignSelf: 'center'}}
         />
-        <View style={{ flex: 1, alignItems: 'center' }}>
+        <View style={{flex: 1, alignItems: 'center'}}>
           <Regular label={'Please Put your player id in the web portal'} />
           <Medium
+            numberOfLines={2}
             label={playerId}
-            style={{ color: colors.primary, fontSize: mvs(34) }}
+            style={{color: colors.primary, fontSize: mvs(34)}}
           />
         </View>
       </View>
@@ -130,11 +128,13 @@ const Home = props => {
         <HorizontalMarquee
           type={'right'}
           delay={playlist?.message?.delay}
-          content={playlist?.message?.message} />
+          content={playlist?.message?.message}
+        />
         <VerticalMarquee
           type={'bottom'}
           delay={playlist?.message?.delay}
-          content={playlist?.message?.message} />
+          content={playlist?.message?.message}
+        />
       </View>
     </View>
   );
