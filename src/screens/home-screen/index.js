@@ -17,6 +17,7 @@ import {PLAYLIST} from 'config/playlist';
 import Lottie from 'lottie-react-native';
 import Medium from 'typography/medium-text';
 import HorizontalMarquee from 'components/molecules/marquee-txt/horizontal-marquee';
+import {convertToSixDigitNumber} from '../../utils/get-hashed-key';
 
 const Home = props => {
   const [playerId, setPlayerId] = React.useState('');
@@ -35,7 +36,8 @@ const Home = props => {
       //   });
       getUniqueId().then(id => {
         console.log('player id=>>:::', id);
-        setPlayerId(id);
+        const pId = convertToSixDigitNumber(id);
+        setPlayerId(pId);
         setLoading(false);
       });
     })();

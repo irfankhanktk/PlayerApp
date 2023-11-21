@@ -13,8 +13,6 @@ import { persistStore } from 'redux-persist'
 
 let persistor = persistStore(store);
 const App = () => {
-  const [loading, setLoading] = useState(false);
-  const [initialRoute, setInitialRoute] = useState<string | undefined>('Splash');
 
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
