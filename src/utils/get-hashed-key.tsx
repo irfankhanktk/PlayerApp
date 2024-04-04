@@ -6,8 +6,8 @@ export const convertToSixDigitNumber = (inputString: string) => {
     const hashedValue = CryptoJS.SHA256(inputString).toString(CryptoJS.enc.Hex);
 
     // Take the first 6 characters of the hash and convert to a decimal number
-    const decimalNumber = parseInt(hashedValue.substring(0, 6), 16);
+    const decimalNumber = parseInt(hashedValue.substring(0, 5), 16);
 
     // Return the unique 6-digit number
-    return String(decimalNumber).padStart(6, '0');
+    return String(decimalNumber).padStart(5, '0');
 };

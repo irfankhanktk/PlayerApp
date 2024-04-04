@@ -22,18 +22,20 @@ import {convertToSixDigitNumber} from '../../utils/get-hashed-key';
 const Home = props => {
   const [playerId, setPlayerId] = React.useState('');
   const [videos, setVideos] = React.useState([]);
-  const [playlist, setPlaylist] = React.useState(PLAYLIST);
+  const [playlist, setPlaylist] = React.useState({});
   const [nextIndex, setNextIndex] = React.useState(0);
   const [isConnected, setIsConnected] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   console.log(width, height);
   React.useEffect(() => {
     (async () => {
-      // database()
-      //   .ref(`/users/12`).onDisconnect().remove((error) => {
-      //     // Do some stuff
-      //     console.log('disconnected client');
-      //   });
+      database()
+        .ref(`/users/12`)
+        .onDisconnect()
+        .remove(error => {
+          // Do some stuff
+          console.log('disconnected client');
+        });
       getUniqueId().then(id => {
         console.log('player id=>>:::', id);
         const pId = convertToSixDigitNumber(id);
@@ -84,14 +86,19 @@ const Home = props => {
   const getVideos = async () => {
     try {
       const res = await getPlaylist(playerId);
-      // setVideos(res);
-      // setPlaylist(res?.data);
-      console.log('get videos response ===> ', res);
+      setVideos(res);
+      setPlaylist(res?.data);
+      console.log('get videos response ===> ', res?.data);
     } catch (error) {}
   };
   React.useEffect(() => {
-    getVideos();
-  }, []);
+    if (!playerId) {
+      // If playerId does not exist, reload the screen
+    } else {
+      getVideos();
+    }
+    // getVideos();
+  }, [playerId]);
   if (loading) {
     return <Loader />;
   }
@@ -126,7 +133,7 @@ const Home = props => {
           frameItem={playlist?.videos[nextIndex] || {}}
         />
       )}
-      <View style={styles.marqueeView}>
+      {/* <View style={styles.marqueeView}>
         <HorizontalMarquee
           type={'right'}
           delay={playlist?.message?.delay}
@@ -137,7 +144,7 @@ const Home = props => {
           delay={playlist?.message?.delay}
           content={playlist?.message?.message}
         />
-      </View>
+      </View> */}
     </View>
   );
 };

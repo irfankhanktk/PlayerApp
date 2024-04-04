@@ -39,7 +39,7 @@ export const PLAYLIST = {
 					"title": "Facebook",
 					"url": "https://fb.watch/l9ivQifALY/",
 					"setting": {
-						"delay": 15,
+						"delay": 5,
 						"position": {
 							"x": 50,
 							"y": 400
@@ -48,13 +48,25 @@ export const PLAYLIST = {
 				},
 				{
 					"icon": "https://cdn-icons-png.flaticon.com/512/5219/5219563.png",
-					"title": "Youtube",
+					"title": "Clock",
 					"url": "https://www.youtube.com/watch?v=Gvf5fR_NPrs",
 					"setting": {
-						"delay": 11,
+						"delay": 5,
 						"position": {
 							"x": 50,
 							"y": 300
+						}
+					}
+				},
+				{
+					"icon": "https://cdn-icons-png.flaticon.com/512/5219/5219563.png",
+					"title": "Youtube",
+					"url": "https://www.youtube.com/watch?v=Gvf5fR_NPrs",
+					"setting": {
+						"delay": 5,
+						"position": {
+							"x": 50,
+							"y": 500
 						}
 					}
 				}

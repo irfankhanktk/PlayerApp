@@ -9,6 +9,7 @@ import Splash from 'screens/splash';
 import WebViewScreen from 'screens/webview-screen';
 import WebView from 'screens/webview-screen';
 import { horizontalAnimation } from '../utils';
+import PDFViewerScreen from 'screens/pdfview-screen';
 const Stack = createNativeStackNavigator();
 
 export const RootNavigator = () => {
@@ -25,6 +26,7 @@ export const RootNavigator = () => {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="WebViewScreen" component={WebViewScreen} />
+        <Stack.Screen name="PDFViewerScreen" component={PDFViewerScreen} />
       </Stack.Navigator>
     </View>
   );
