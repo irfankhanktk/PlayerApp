@@ -99,6 +99,7 @@ const Home = props => {
     }
     // getVideos();
   }, [playerId]);
+
   if (loading) {
     return <Loader />;
   }
@@ -129,6 +130,7 @@ const Home = props => {
           nextIndex={nextIndex}
           setNextIndex={setNextIndex}
           playlist={playlist}
+          getVideos={getVideos}
           speed={5}
           frameItem={playlist?.videos[nextIndex] || {}}
         />
