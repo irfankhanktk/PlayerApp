@@ -1,17 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CommonActions } from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
+import NetInfo from '@react-native-community/netinfo';
 import moment from 'moment';
-import {
-  Linking, PermissionsAndroid, Platform,
-  Share
-} from 'react-native';
+import {Linking, PermissionsAndroid, Platform, Share} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import { NavigationProps } from '../types/navigation-types';
+import {NavigationProps} from '../types/navigation-types';
 // Initialize the module (needs to be done only once)
+
 export const horizontalAnimation: any = {
   headerShown: false,
   gestureDirection: 'horizontal',
-  cardStyleInterpolator: ({ current, layouts }: any) => {
+  cardStyleInterpolator: ({current, layouts}: any) => {
     return {
       cardStyle: {
         transform: [
@@ -58,12 +57,12 @@ export const UTILS = {
       }),
     );
   },
+
   dialPhone: async (phoneNumber: string) => {
     try {
       const isSupported = await Linking.canOpenURL(`tel:${phoneNumber}`);
       console.log('isSupported=>', isSupported);
-      if (isSupported)
-        Linking.openURL(`tel:${phoneNumber}`);
+      if (isSupported) Linking.openURL(`tel:${phoneNumber}`);
     } catch (error) {
       console.log('error =>', error);
     }
@@ -73,6 +72,15 @@ export const UTILS = {
       await Linking.openURL(url);
     } catch (error) {
       console.log('error =>', error);
+    }
+  },
+  checkInternetConnection: async () => {
+    try {
+      const state = await NetInfo.fetch();
+      return state.isConnected;
+    } catch (error) {
+      console.error('Error checking internet connection:', error);
+      return false; // Return false if an error occurs
     }
   },
   getItem: async (key: string) => {
@@ -200,19 +208,19 @@ export const UTILS = {
         if (
           item.types.some((el: any) => el === 'administrative_area_level_1')
         ) {
-          returnAddress = { ...returnAddress, province: item.long_name };
+          returnAddress = {...returnAddress, province: item.long_name};
         } else if (
           item.types.some((el: any) => el === 'administrative_area_level_2')
         ) {
-          returnAddress = { ...returnAddress, district: item.long_name };
+          returnAddress = {...returnAddress, district: item.long_name};
         } else if (
           item.types.some((el: any) => el === 'administrative_area_level_3')
         ) {
-          returnAddress = { ...returnAddress, tehsil: item.long_name };
+          returnAddress = {...returnAddress, tehsil: item.long_name};
         } else if (item.types.some((el: any) => el === 'locality')) {
-          returnAddress = { ...returnAddress, city: item.long_name };
+          returnAddress = {...returnAddress, city: item.long_name};
         } else if (item.types.some((el: any) => el === 'sublocality')) {
-          returnAddress = { ...returnAddress, area: item.long_name };
+          returnAddress = {...returnAddress, area: item.long_name};
         } else if (item.types.some((el: any) => el === 'street_address')) {
           returnAddress = {
             ...returnAddress,
@@ -234,6 +242,7 @@ export const UTILS = {
     });
     return returnAddress;
   },
+
   // requestLocationPermission: async () => {
   //   try {
   //     if (Platform.OS === 'ios') {
@@ -375,5 +384,5 @@ export const UTILS = {
     } catch (err) {
       console.warn(err);
     }
-  }
+  },
 };

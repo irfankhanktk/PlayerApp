@@ -1,6 +1,6 @@
-import { StyleSheet } from 'react-native';
-import { height, mvs } from '../../config/metrices';
-import { colors } from '../../config/colors';
+import {StyleSheet} from 'react-native';
+import {height, mvs} from '../../config/metrices';
+import {colors} from '../../config/colors';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     borderRadius: mvs(12),
     flexDirection: 'row',
     position: 'absolute',
-    backgroundColor: colors.primary
+    backgroundColor: colors.primary,
   },
   search: {
     paddingHorizontal: mvs(20),
@@ -27,29 +27,25 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingVertical: mvs(10),
     paddingHorizontal: mvs(20),
-    paddingBottom: mvs(100)
+    paddingBottom: mvs(100),
   },
   backgroundVideo: {
     height: 300,
-    width: '100%'
+    width: '100%',
   },
-  image: {
-
-  },
+  image: {},
   videoView: {
     backgroundColor: colors.blueHalf,
-    width: "100%",
+    width: '100%',
     height: height,
     // minHeight: 300
   },
   marqueeView: {
-    position: "absolute",
+    position: 'absolute',
     bottom: mvs(50),
     // right: mvs(20),
     // left: mvs(20),
     // backgroundColor: `${colors.black}60`
-  }
-
-
+  },
 });
 export default styles;
