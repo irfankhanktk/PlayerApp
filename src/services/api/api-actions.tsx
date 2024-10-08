@@ -5,7 +5,7 @@ import {URLS} from './api-urls';
 export const syncTimeStamp = async (player_id: string) => {
   try {
     const res = await getData(`${URLS.sync_time_stamp}${player_id}`);
-    console.log('res of getHomeData=>', res);
+    // console.log('res of getHomeData=>', res);
     // dispatch(setHospitals(res?.allHospitals || []));
     // return res;
   } catch (error: any) {
@@ -18,7 +18,7 @@ export const getPlaylist = async (player_id: string) => {
     const res = await postData(`${URLS.playlist}`, {
       code: player_id,
     });
-    console.log('res of getPlaylist=>', res?.data?.videos);
+    // console.log('res of getPlaylist=>', res);
     // dispatch(setHospitals(res?.allHospitals || []));
     return res;
   } catch (error: any) {

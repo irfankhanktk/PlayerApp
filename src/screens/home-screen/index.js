@@ -16,7 +16,9 @@ import Lottie from 'lottie-react-native';
 import Medium from 'typography/medium-text';
 import HorizontalMarquee from 'components/molecules/marquee-txt/horizontal-marquee';
 import {convertToSixDigitNumber} from '../../utils/get-hashed-key';
-
+import {Linking} from 'react-native';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {Platform} from 'react-native';
 import db, {
   createTableIfNotExists,
   downloadVideo,
@@ -27,9 +29,8 @@ const Home = props => {
   const [playerId, setPlayerId] = React.useState('');
   const [videos, setVideos] = React.useState([]);
   const [playlist, setPlaylist] = React.useState({});
-  const [nextIndex, setNextIndex] = React.useState(0);
+  const [nextIndex, setNextIndex] = React.useState(1);
   const [isConnected, setIsConnected] = React.useState(false);
-  // console.log('isConnected check===>', isConnected);
   const [loading, setLoading] = React.useState(true);
   console.log(width, height);
 
@@ -38,9 +39,39 @@ const Home = props => {
     createTableIfNotExists();
   };
 
+  const requestOverlayPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const result = await check(PERMISSIONS.ANDROID.SYSTEM_ALERT_WINDOW);
+        console.log('RESULT:', result);
+
+        if (result === RESULTS.UNAVAILABLE) {
+          console.log('Permission is not available on this device.');
+          return;
+        }
+        if (result !== RESULTS.GRANTED) {
+          Alert.alert(
+            'Permission Needed',
+            'PlayerApp needs to be granted permission to draw over other windows. On the next screen, please grant this permission.',
+            [
+              {
+                text: 'Go to Settings',
+                onPress: () => Linking.openSettings(),
+              },
+              {text: 'Cancel', style: 'cancel'},
+            ],
+          );
+        }
+      } catch (error) {
+        console.error('Error checking permission:', error);
+      }
+    }
+  };
+
   const getVideos = async () => {
     try {
       const res = await getPlaylist(playerId);
+      // console.log('res check===>', res);
       const videoData = await Promise.all(
         res?.data?.videos.map(async video => {
           const localPath = await downloadVideo(
@@ -104,8 +135,9 @@ const Home = props => {
     }
   };
 
-  // Call initializeDatabase() inside your useEffect or initialization logic
   React.useEffect(() => {
+    requestOverlayPermission(); // Request the permission first
+
     initializeDatabase();
   }, []);
 

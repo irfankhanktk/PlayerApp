@@ -1,15 +1,19 @@
 import {colors} from 'config/colors';
-import {height, mvs} from 'config/metrices';
-import React, {useEffect, useRef, useState} from 'react';
-import {Animated, Image} from 'react-native';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {mvs} from 'config/metrices';
+import {navigate} from 'navigation/navigation-ref';
+import React, {useEffect, useState} from 'react';
+import {
+  Animated,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Video from 'react-native-video';
 import convertToProxyURL from 'react-native-video-cache';
 import Regular from 'typography/regular-text';
 import {UTILS} from 'utils';
-import {navigate} from 'navigation/navigation-ref';
 import IconPositions from '../icon-positions';
-import Bold from 'typography/bold-text';
 
 const VideoFrame = ({
   frameItem,
@@ -19,10 +23,12 @@ const VideoFrame = ({
   getVideos, // Add getVideos as a prop
   props,
 }) => {
+  // console.log('data check===>', playlist);
   const videoRef = React.useRef(null);
   const [currentProgressTime, setCurrentProgressTime] = React.useState(0);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
   const frame = {...frameItem};
-  // console.log('framItem check===>', frameItem);
   const onBuffer = buffer => {
     // if (buffer?.isBuffering === false) setIsNext(false)
   };
@@ -33,18 +39,23 @@ const VideoFrame = ({
 
   const pauseAfter20Seconds = () => {};
   const onProgress = progress => {
+    // console.log('onProgress check===>', progress);
     const {currentTime, playableDuration} = progress;
-    // console.log('playableDuration::', playableDuration);
-    console.log('currentTime::', currentTime);
+    // console.log('playableDuration::', Math.floor(playableDuration));
+    // console.log('currentTime::', Math.floor(currentTime));
 
-    if (Math.round(currentTime) >= Math.round(playableDuration)) {
+    if (Math.floor(currentTime) == Math.floor(playableDuration)) {
+      console.log(
+        'Math.floor(currentTime) >= Math.floor(playableDuration',
+        Math.floor(currentTime) == Math.floor(playableDuration),
+      );
       const isLastVideo = nextIndex >= playlist?.videos?.length - 1;
       if (isLastVideo) {
-        console.log('is last video');
+        // console.log('is last video');
         getVideos();
         setNextIndex(0); // Reset to the first video
       } else {
-        console.log('next video index');
+        // console.log('next video index');
         setNextIndex(nextIndex + 1);
       }
       setCurrentProgressTime(0);
@@ -59,8 +70,6 @@ const VideoFrame = ({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
   });
-
-  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     // Update the current time every second
