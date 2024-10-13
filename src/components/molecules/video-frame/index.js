@@ -23,7 +23,6 @@ const VideoFrame = ({
   getVideos, // Add getVideos as a prop
   props,
 }) => {
-  // console.log('data check===>', playlist);
   const videoRef = React.useRef(null);
   const [currentProgressTime, setCurrentProgressTime] = React.useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());

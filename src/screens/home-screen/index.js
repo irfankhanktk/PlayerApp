@@ -71,7 +71,7 @@ const Home = props => {
   const getVideos = async () => {
     try {
       const res = await getPlaylist(playerId);
-      // console.log('res check===>', res);
+      // console.log('res check===>', res?.data?.videos);
       const videoData = await Promise.all(
         res?.data?.videos.map(async video => {
           const localPath = await downloadVideo(
